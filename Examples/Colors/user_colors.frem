@@ -1,0 +1,75 @@
+# User-defined colors
+# Generate a Random user color palette
+# Display the generated colors in a loop
+Cls()
+
+# Use default color palette for this program
+SysPut("N", 20, 0)
+
+# Define custom colors
+# Values are defined as RGB (0-255)triplets
+# stored in system memory register values.
+FUNCTION defUserColor(
+	number index,
+	number red,
+	number green,
+	number blue
+)
+	# USR1 memory starts at 32
+	SET number pos = 64 + (index * 3)
+	SysPut("N", pos, red)
+	SysPut("N", pos + 1, green)
+	SysPut("N", pos + 2, blue)
+
+RESULT nothing
+
+# Define Random colors
+SET list colors = Range(0, 15)
+EACH idx IN colors REPEAT
+	SET number r = Random(0, 255)
+	SET number g = Random(0, 255)
+	SET number b = Random(0, 255)
+	defUserColor(idx, r, g, b)
+
+	Write(
+	    "Defining user color ", idx,":  ",
+	    "(", r, ",", g, ",", b, ")"
+	)
+	WriteLn("")
+DONE
+
+WriteLn("Displaying colors...")
+Wait(0.5)
+
+# Switch to user color palette
+SysPut("N", 20, 6)
+
+READY number border
+READY number bg
+READY number fg
+
+# Loop forever
+WHILE true REPEAT
+    # Cycle through the border colors
+    WHILE border lt 16 REPEAT
+        SysPut("N", 22, border)
+
+        # Cycle through background colors
+        WHILE bg lt 16 REPEAT
+            SysPut("N", 21, bg)
+            # Cycle through font colors
+            WHILE fg lt 16 REPEAT
+                SysPut("N", 23, fg)
+                fg = fg + 1
+                Wait(0.25)
+            DONE
+
+            bg = bg + 1
+            fg = 0
+        DONE
+
+        bg = 0
+        border = border + 1
+    DONE
+    border = 0
+DONE

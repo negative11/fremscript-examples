@@ -1,0 +1,18 @@
+# Chapter idea: Write shortcuts for
+# SysGet() calls.
+
+FUNCTION $(number n)
+	OUTPUT SysGet("S", n)
+RESULT string
+
+FUNCTION &(number n)
+	OUTPUT SysGet("N", n)
+RESULT number
+
+FUNCTION !(number n)
+	OUTPUT SysGet("B", n)
+RESULT boolean
+
+WriteLn($(0))
+WriteLn(&(0))
+WriteLn(!(0))

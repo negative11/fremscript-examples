@@ -1,0 +1,275 @@
+Cls()
+
+FUNCTION SetUp()
+	# Connect host keyboard to system
+	SysPut("B", 5, true)
+	# Enable the Grid layer
+	SysPut("B", 20, true)
+	# Enable the Sprite layer
+	SysPut("B", 40, true)
+	# Enable Sprite 0
+	SysPut("B", 42, true)
+
+	# Clear any previous layer items
+	ClearSprites()
+	ClearGrid()
+	ClearPixels()
+	Sync()
+RESULT nothing
+
+FUNCTION SetPlayerPos(number x, number y)
+	IF CheckCollision(x, y) EQ false THEN
+		playerPosX = x
+		playerPosY = y
+	OK
+RESULT nothing
+
+FUNCTION MoveUp()
+	IF playerPosY GT 24 THEN
+		SetPlayerPos(playerPosX, playerPosY-8)
+	OK
+RESULT nothing
+
+FUNCTION MoveDown()
+	IF playerPosY LT 184 THEN
+		SetPlayerPos(playerPosX, playerPosY+8)
+	OK
+RESULT nothing
+
+FUNCTION MoveLeft()
+	IF playerPosX GT 9 THEN
+		SetPlayerPos(playerPosX-8, playerPosY)
+	OK
+RESULT nothing
+
+FUNCTION MoveRight()
+	IF playerPosX LT 304 THEN
+		SetPlayerPos(playerPosX+8,playerPosY)
+	OK
+RESULT nothing
+
+FUNCTION Action()
+	WriteLn("ACTION")
+RESULT nothing
+
+FUNCTION DrawLevelBorder()
+	EACH y in [0, 1, 2, 24] REPEAT
+		EACH x in Range(0, 39) REPEAT
+			Grid(x, y, 0, 0, 0, 1)
+		DONE
+	DONE
+
+	EACH x in [0, 39] REPEAT
+		EACH y in Range(0, 24) REPEAT
+			Grid(x, y, 0, 0, 0, 1)
+		DONE
+	DONE
+RESULT nothing
+
+FUNCTION SetBackgroundColors()
+	# Set color palette to USER_1
+	SysPut("N", 20, 9)
+	# Background color
+	SysPut("N", 21, 9)
+	# Border color
+	SysPut("N", 22, 0)
+RESULT nothing
+
+SET list blocks = [
+	[10,10],
+	[20, 20],
+	[37, 18],
+	[18, 22],
+	[6, 6],
+	[19, 19],
+	[37, 4],
+	[27, 5],
+	[5, 5],
+	[12, 12],
+	[38, 5],
+	[20, 6],
+	[28, 21]
+]
+
+FUNCTION DrawBlocks()
+	EACH block IN blocks REPEAT
+		SET number color = Random(32,160)
+		SET number x = block[0]
+		SET number y = block[1]
+		Grid(x, y, color, color, color, 1)
+		AddCollision(x, y)
+	DONE
+RESULT nothing
+
+SET list coins = [
+	[12,15],
+	[30, 20],
+	[34, 18],
+	[38, 10],
+	[2, 15],
+	[22, 4],
+	[8, 4],
+	[18, 21]
+]
+
+FUNCTION DrawCoins()
+	EACH coin IN coins REPEAT
+		SET number x = coin[0]
+		SET number y = coin[1]
+		Grid(x, y, 245, 182, 66, 1)
+		AddCollectable(x, y)
+	DONE
+RESULT nothing
+
+READY list collectables
+
+FUNCTION AddCollectable(number x, number y)
+	Append(collectables, [x, y])
+RESULT nothing
+
+FUNCTION TakeCollectable(number x, number y)
+	EACH idx, coin IN coins REPEAT
+		IF x EQ coin[0]*8 AND y EQ coin[1]*8 THEN
+			collected = collected + 1
+			Remove(coins, idx)
+			Grid(coin[0], coin[1], 0,0,0,0)
+			DrawGrid()
+			OUTPUT nothing
+		OK
+	DONE
+RESULT nothing
+
+READY list collisions
+
+FUNCTION AddCollision(number x, number y)
+	Append(collisions, [x, y])
+RESULT nothing
+
+FUNCTION CheckCollision(number x, number y)
+	EACH c IN collisions REPEAT
+		IF c[0]*8 EQ x AND c[1]*8 EQ y THEN
+			OUTPUT true
+		OK
+	DONE
+	OUTPUT false
+RESULT boolean
+
+FUNCTION DrawLevel()
+	SetBackgroundColors()
+	DrawLevelBorder()
+	DrawBlocks()
+	DrawCoins()
+	DrawGrid()
+RESULT nothing
+
+READY number playerPosX
+READY number playerPosY
+
+READY number collected
+SET number time = Timestamp()
+FUNCTION UpdateGUI()
+	SET number timePlayed = Timestamp() - time
+	Cls()
+	WriteLn("Coins: " + ToStr(collected))
+	WriteLn("Time: " + ToStr(timePlayed))
+RESULT nothing
+
+FUNCTION UpdatePlayerPos()
+	SpritePos(0, playerPosX, playerPosY)
+	TakeCollectable(playerPosX, playerPosY)
+	UpdateGUI()
+	Wait(.08)
+RESULT nothing
+
+SET list playerSprite = [
+	[0, 0, 0, 0, 0, 0, 0 , 0],
+	[0, 1, 1, 1, 1, 1, 1 , 0],
+	[1, 0, 0, 0, 0, 0, 0 , 1],
+	[1, 0, 1, 0, 0, 1, 0 , 1],
+	[1, 0, 0, 0, 0, 0, 0 , 1],
+	[1, 0, 0, 1, 1, 0, 0 , 1],
+	[0, 1, 1, 1, 1, 1, 1 , 0],
+	[0, 0, 0, 0, 0, 0, 0 , 0]
+]
+FUNCTION DrawPlayerSprite()
+	EACH y, row in playerSprite REPEAT
+		EACH x, state in row REPEAT
+			IF state EQ 1 THEN
+				SpriteSet(
+					0, x, y, 255, 0, 0, 1
+				)
+			ELSE
+				SpriteSet(
+					0, x, y, 0, 0, 255, 0
+				)
+			OK
+		DONE
+	DONE
+	DrawSprites()
+RESULT nothing
+
+FUNCTION CreatePlayer()
+	DrawPlayerSprite()
+	playerPosX = 128
+	playerPosY = 64
+	UpdatePlayerPos()
+RESULT nothing
+
+FUNCTION RandomTone(number channel)
+	# Play a  note over random octave range
+	# using random waveform
+	SET number shape = Random(0, 3)
+	SET number octave = Random(2, 5)
+	SET number note = 0 #C
+
+	Tone(
+		channel,
+		shape,
+		octave,
+		note,
+		# ADSR
+		0, 0, 1, 0
+	)
+RESULT nothing
+
+FUNCTION UpdateSounds()
+	IF soundCtr MOD 5 EQ 0 THEN
+		# Toggle audio gates.
+		Gate(0, false)
+		Gate(1, true)
+	ELSE
+		# Play new random sample
+		RandomTone(0)
+		RandomTone(1)
+		Gate(0, true)
+		Gate(1, false)
+	OK
+RESULT nothing
+
+SetUp()
+DrawLevel()
+CreatePlayer()
+
+READY number soundCtr
+Volume(0, -18)
+Volume(1, -18)
+WHILE true REPEAT
+	soundCtr = soundCtr + 1
+	UpdatePlayerPos()
+	UpdateSounds()
+	IF KeyDown() EQ "UP" THEN
+		MoveUp()
+	OK
+	IF KeyDown() EQ "DOWN" THEN
+		MoveDown()
+	OK
+	IF KeyDown() EQ "LEFT" THEN
+		MoveLeft()
+	OK
+	IF KeyDown() EQ "RIGHT" THEN
+		MoveRight()
+	OK
+	IF KeyDown() EQ "SPACE" THEN
+		Action()
+	OK
+DONE

@@ -1,0 +1,28 @@
+Cls()
+SysPut("B", 30, true)
+
+FUNCTION Clear()
+	ClearPixels()
+	DrawPixels()
+	Sync()
+RESULT nothing
+
+Clear()
+WHILE true REPEAT
+	EACH y in Range(0, 256) REPEAT
+		Pixel(
+			Random(0, 319),
+			Random(0, 199),
+			Random(0, 255),
+			Random(0, 255),
+			Random(0, 255),
+			1
+		)
+	DONE
+	DrawPixels()
+	Wait(1)
+
+	IF Timestamp() MOD 60 EQ 0 THEN
+		Clear()
+	OK
+DONE

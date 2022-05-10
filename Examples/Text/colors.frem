@@ -1,0 +1,74 @@
+# Demo the system colors
+
+########################################
+# WARNING: may potentially trigger     #
+# seizures for people with             #
+# photosensitive epilepsy.             #
+########################################
+
+
+# Fill screen with characters
+Cls()
+SET string char = "*"
+READY number x
+READY number y
+
+WHILE y LT 20 REPEAT
+	WriteLn("")
+	WHILE x LT 40 REPEAT
+		x = x + 1
+		Write(char)
+	DONE
+	x = 0
+	y = y + 1
+DONE
+
+# Total number of system color palettes
+SET number palettes = 6
+
+# Total number of colors per palette
+SET number colors = 16
+
+# Number of seconds to Wait between
+# color changes. Setting this to lower values
+# will make the screen flash and change colors
+# more rapidly!
+SET number delay = 0.1
+
+# Counters for looping
+READY number palette
+READY number border
+READY number bg
+READY number fg
+
+# Loop forever
+WHILE true REPEAT
+	# Cycle through the system palettes
+	WHILE palette LT palettes REPEAT
+		SysPut("N", 20, palette)
+	    # Cycle through the border colors
+	    WHILE border lt colors REPEAT
+	        SysPut("N", 22, border)
+
+	        # Cycle through background colors
+	        WHILE bg lt colors REPEAT
+	            SysPut("N", 21, bg)
+	            # Cycle through font colors
+	            WHILE fg lt colors REPEAT
+	                SysPut("N", 23, fg)
+	                fg = fg + 1
+	                Wait(delay)
+	            DONE
+
+	            bg = bg + 1
+	            fg = 0
+	        DONE
+
+	        bg = 0
+	        border = border + 1
+	    DONE
+	    border = 0
+		palette = palette + 1
+	DONE
+	palette = 0
+DONE

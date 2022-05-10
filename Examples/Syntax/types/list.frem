@@ -1,0 +1,64 @@
+Cls()
+
+# Create a simple list of numbers
+SET list nums = [1,2,3]
+WriteLn(nums)
+
+# Add a number to the end
+Append(nums, 4)
+WriteLn(nums)
+
+# Overwrite the first number
+nums[0] = 999
+WriteLn(nums)
+
+# Overwrite the second number using variable
+SET number idx = 1
+nums[idx] = 888
+
+# Overwrite the third number using function.
+FUNCTION GetIndex()
+	OUTPUT 2
+RESULT number
+nums[GetIndex()] = 1024
+
+# Any type can be added to a list.
+Append(nums, "bread")
+WriteLn(nums)
+
+# But you can't overwrite a value with
+# a different type.
+# This will error
+# nums[4] = 5
+
+# To overWrite, First remove, then replace.
+Remove(nums, 4)
+Append(nums, 5)
+WriteLn(nums)
+
+# Take an item from the start of the list.
+SET number start = Shift(nums)
+WriteLn(start)
+# The list is shorter now
+WriteLn(nums)
+
+# Take an item from the end of the list.
+SET number end = Pop(nums)
+WriteLn(end)
+# The list is shorter now
+WriteLn(nums)
+
+# Read First item, but don't Remove it.
+WriteLn(First(nums))
+# Read Last item
+WriteLn(Last(nums))
+# List unchanged
+WriteLn(nums)
+
+# Functions can be assigned to list elements.
+FUNCTION hello()
+    WriteLn("Hello!")
+RESULT nothing
+SET list functions = [hello]
+# Say hello!
+functions[0]()

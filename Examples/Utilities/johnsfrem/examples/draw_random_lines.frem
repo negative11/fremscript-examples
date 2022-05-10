@@ -1,0 +1,38 @@
+CacheGet(255)()
+Init()
+
+# Draw random lines
+READY number drawn
+SET number maxLines = Random(25, 50)
+WHILE true REPEAT
+	# Clear the lines every now and then
+	IF drawn GT maxLines THEN
+		Clear()
+		drawn = 0
+		maxLines = Random(25, 50)
+	OK
+
+	SET number x1 = Random(0, 319)
+	SET number x2 = Random(0, 319)
+	SET number y1 = Random(0, 199)
+	SET number y2 = Random(0, 199)
+	SET map c = Color(
+		Random(0, 255),
+		Random(0, 255),
+		Random(0, 255),
+		1
+	)
+
+	Status(
+		"Points a, b",
+		"(" + ToStr(x1) + ", " + ToStr(y1)+ ")"
+		+ " " +
+		"(" + ToStr(x2) + ", " + ToStr(y2)+ ")"
+	)
+
+	Line(x1, y1, x2, y2, c)
+	Draw()
+
+	drawn = drawn + 1
+	Wait(.1)
+DONE

@@ -1,0 +1,22 @@
+# Adjust the font settings.
+# Turn off line spacing
+SysPut("N", 31, 0)  # Top pixels
+SysPut("N", 32, -3)  # Bottom pixels
+
+# Turn of vertical adjustment
+# This will align it precisely at edge
+# of top border.
+SysPut("N", 33, 0)
+
+# Now, we can also increase the total
+# number of lines to 25, since we have
+# a bit more space to deal with.
+SysPut("N", 30, 25)
+
+Wait(1)
+Cls()
+EACH line in Range(0, 24) REPEAT
+	WriteLn(line)
+DONE
+
+# Note: Power cycle to reset these values

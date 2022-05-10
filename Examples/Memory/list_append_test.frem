@@ -1,0 +1,23 @@
+Cls()
+
+FUNCTION ShowMemoryUsage()
+	WriteLn(
+		"MEMORY USED: " + ToStr(SysGet("N", 8))
+	)
+RESULT nothing
+
+READY list numbers
+
+WHILE true REPEAT
+	Append(numbers, Timestamp())
+
+	# Empty the list at Random intervals
+	IF Size(numbers)
+	GTE 5000 THEN
+		ShowMemoryUsage()
+		WHILE Size(numbers) GT 0 REPEAT
+			Pop(numbers)
+		DONE
+		ShowMemoryUsage()
+	OK
+DONE

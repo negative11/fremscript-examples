@@ -1,0 +1,6 @@
+# Print available font chars
+Cls()
+
+EACH i IN Range(32, 52) REPEAT
+	WriteLn(SysGet("S", i))
+DONE

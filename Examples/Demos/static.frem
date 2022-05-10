@@ -1,0 +1,47 @@
+ClearPixels()
+ClearGrid()
+Cls()
+
+FUNCTION Draw()
+	# Draw color Grid squares on screen.
+	SET list xCoords = Range(0, 39)
+	SET list yCoords = Range(0, 24)
+
+	EACH y IN yCoords REPEAT
+		EACH x IN xCoords REPEAT
+			SET number c = Random(64,192)
+
+			Grid(x, y, c, c, c, 1)
+		DONE
+	DONE
+	DrawGrid()
+RESULT nothing
+
+FUNCTION PlayNoise()
+	Tone(
+		0,
+		4,
+		3,
+		0,
+		0,
+		0,
+		1,
+		0
+	)
+
+	Volume(0, -12)
+	Gate(0, true)
+RESULT nothing
+
+# Disable the text layer
+SysPut("B", 10, false)
+
+# Enable Grid layer
+SysPut("B", 20, true)
+
+PlayNoise()
+
+# Update grid
+WHILE true REPEAT
+	Draw()
+DONE

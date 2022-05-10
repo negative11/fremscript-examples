@@ -1,0 +1,201 @@
+######################
+#                    #
+# FREM Splash Screen #
+#                    #
+######################
+Cls()
+
+# Enable the Grid layer
+SysPut("B", 20, true)
+
+# Enable Pixel layer
+SysPut("B", 30, true)
+
+# Enable Sprite layer
+SysPut("B", 40, true)
+
+# Clear any previous draws
+ClearGrid()
+ClearSprites()
+Sync()
+
+# Set color palette to FREM default.
+SysPut("N", 20, 0)
+
+# Set the border color to yellow.
+SysPut("N", 22, 6)
+
+# Get the version number.
+SET string version = SysGet("S", 15)
+
+# FREM orange
+SET number r = 240
+SET number g = 128
+SET number b = 0
+SET number a = 1
+
+# Draw sides of inner box
+EACH x IN [0, 39] REPEAT
+	EACH y IN Range(1, 23) REPEAT
+		Grid(x, y, r, g, b, a)
+	DONE
+DONE
+
+# Draw top/bottom of inner box
+EACH x IN Range(0, 39) REPEAT
+	EACH y IN [1, 23] REPEAT
+		Grid(x, y, r, g, b, a)
+	DONE
+DONE
+
+# Draw Logo accents
+EACH x IN Range(0, 39) REPEAT
+	EACH y IN [5, 7, 9, 11] REPEAT
+		Grid(x, y, 240, 240, 64, a)
+	DONE
+DONE
+
+EACH x IN Range(0, 39) REPEAT
+	EACH y IN [4, 6, 8, 10, 12] REPEAT
+		Grid(x, y, 128, 128, 64, a)
+	DONE
+DONE
+
+DrawGrid()
+
+# Build sprite from list of points
+FUNCTION BuildSprite(number s, list points)
+	EACH y, row IN points REPEAT
+		EACH x, state IN row REPEAT
+			# Transparent
+			IF state EQ 0 THEN
+				SpriteSet(
+					s, x, y, 0, 0, 0, 0
+				)
+			OK
+
+			# Primary
+			IF state EQ 1 THEN
+				SpriteSet(
+					s, x, y, 0, 0, 0, 1
+				)
+			OK
+		DONE
+	DONE
+RESULT nothing
+
+# Clear Pixels
+FUNCTION Clear()
+	ClearPixels()
+	DrawPixels()
+	Sync()
+RESULT nothing
+
+# Sprite 0: Letter F
+SysPut("B", 42, true)
+SET list cF = [
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 1, 1, 1, 1, 1, 1, 1],
+	[0, 1, 1, 0, 0, 0, 0, 0],
+	[0, 1, 1, 0, 0, 0, 0, 0],
+	[0, 1, 1, 1, 1, 1, 0, 0],
+	[0, 1, 1, 0, 0, 0, 0, 0],
+	[0, 1, 1, 0, 0, 0, 0, 0],
+	[0, 1, 1, 0, 0, 0, 0, 0]
+]
+
+# Sprite 1: Letter R
+SysPut("B", 43, true)
+SET list cR = [
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 1, 1, 1, 1, 1, 1, 0],
+	[0, 1, 1, 0, 0, 0, 1, 1],
+	[0, 1, 1, 0, 0, 0, 1, 1],
+	[0, 1, 1, 1, 1, 1, 1, 0],
+	[0, 1, 1, 0, 0, 0, 1, 1],
+	[0, 1, 1, 0, 0, 0, 1, 1],
+	[0, 1, 1, 0, 0, 0, 1, 1]
+]
+
+# Sprite 2: Letter E
+SysPut("B", 44, true)
+SET list cE = [
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 1, 1, 1, 1, 1, 1, 1],
+	[0, 1, 1, 0, 0, 0, 0, 0],
+	[0, 1, 1, 0, 0, 0, 0, 0],
+	[0, 1, 1, 1, 1, 1, 0, 0],
+	[0, 1, 1, 0, 0, 0, 0, 0],
+	[0, 1, 1, 0, 0, 0, 0, 0],
+	[0, 1, 1, 1, 1, 1, 1, 1]
+]
+
+# Sprite 3: Letter M
+SysPut("B", 45, true)
+SET list cM = [
+	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 1, 1, 0, 0, 0, 1, 1],
+	[0, 1, 1, 1, 0, 1, 1, 1],
+	[0, 1, 1, 1, 1, 1, 1, 1],
+	[0, 1, 1, 0, 1, 0, 1, 1],
+	[0, 1, 1, 0, 0, 0, 1, 1],
+	[0, 1, 1, 0, 0, 0, 1, 1],
+	[0, 1, 1, 0, 0, 0, 1, 1]
+]
+
+SET number start = 16
+BuildSprite(0, cF)
+SpriteScale(0, 7, 7)
+SpritePos(0, start, 32)
+
+BuildSprite(1, cR)
+SpriteScale(1, 7, 7)
+SpritePos(1, start+64, 32)
+
+BuildSprite(2, cE)
+SpriteScale(2, 7, 7)
+SpritePos(2, start+128, 32)
+
+BuildSprite(3, cM)
+SpriteScale(3, 7, 7)
+SpritePos(3, start+192, 32)
+
+DrawSprites()
+
+# Draw pixel accents
+Clear()
+EACH x in [274, 278, 282, 286, 290, 294, 298, 302, 306, 310, 314, 318] REPEAT
+	EACH y in Range(48, 87) REPEAT
+		Pixel(x, y, 0, 0, 0, 1)
+	DONE
+DONE
+
+EACH x in [0, 4, 8, 12, 16, 20, 24] REPEAT
+	EACH y in Range(48, 87) REPEAT
+		Pixel(x, y, 0, 0, 0, 1)
+	DONE
+DONE
+DrawPixels()
+
+# Set text color
+SysPut("N", 23, 6)
+
+# Draw text.
+WriteLn("")
+WriteLn("")
+WriteLn("")
+WriteLn("")
+WriteLn("")
+WriteLn("")
+WriteLn("")
+WriteLn("")
+WriteLn("")
+WriteLn("")
+WriteLn("   FIRST RATE EMBEDDED MICROSYSTEMS")
+WriteLn("   Sprite-32!")
+WriteLn("   COPYRIGHT 1985")
+WriteLn("")
+WriteLn("")
+WriteLn("")
+WriteLn("")
+WriteLn("                     " + version)

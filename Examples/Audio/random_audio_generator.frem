@@ -1,0 +1,61 @@
+FUNCTION RandomTone(number channel)
+	SET number shape = Random(0, 4)
+	SET number octave = Random(0, 6)
+	SET number note = Random(0, 11)
+	SET number attack = 0
+	SET number decay = 0
+	SET number sustain = 1
+	SET number release = 0
+
+	Tone(
+    	channel,
+    	shape,
+    	octave,
+    	note,
+    	attack,
+    	decay,
+    	sustain,
+    	release
+    )
+RESULT nothing
+
+FUNCTION UpdateSounds()
+	IF soundCtr MOD 1000 EQ 0 THEN
+		# Toggle audio gates.
+		Gate(0, false)
+		Gate(1, true)
+	ELSE
+		# Play new random sample
+		RandomTone(0)
+		RandomTone(1)
+		Gate(0, true)
+		Gate(1, false)
+	OK
+RESULT nothing
+
+READY number soundCtr
+
+Volume(0, -12)
+Volume(1, -12)
+
+WHILE true REPEAT
+	soundCtr = soundCtr + 1
+	UpdateSounds()
+	Wait(.1)
+	WriteLn("BEEP")
+	IF soundCtr MOD 23 EQ 0 THEN
+		Cls()
+	OK
+
+	IF soundCtr MOD 5 EQ 0 THEN
+		SysPut("N", 21, Random(0, 15))
+	OK
+
+	IF soundCtr MOD 15 EQ 0 THEN
+		SysPut("N", 22, Random(0, 15))
+	OK
+
+	IF soundCtr MOD 33 EQ 0 THEN
+		SysPut("N", 23, RandoM(0, 15))
+	OK
+DONE

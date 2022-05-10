@@ -1,0 +1,11 @@
+Cls()
+
+# Lock the keyboard to hardware
+
+WriteLn("Host keyboard locked to hardware")
+WriteLn("Press STOP to release")
+SysPut("B", 5, true)
+Wait(30)
+SysPut("B", 5, false)
+WriteLn("Host keyboard unlocked")
+Wait(1)

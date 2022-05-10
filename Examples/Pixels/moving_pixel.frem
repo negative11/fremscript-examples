@@ -1,0 +1,27 @@
+Cls()
+SysPut("B", 30, true)
+
+READY number x
+READY number y
+WHILE true REPEAT
+	ClearPixels()
+	x = x + 1
+	IF x GT 319 THEN
+		x = 0
+		y = y + 1
+		IF y GT 199 THEN
+			y = 0
+		OK
+	OK
+
+	Pixel(
+		x,
+		y,
+		255,
+		0,
+		0,
+		1
+	)
+
+	DrawPixels()
+DONE

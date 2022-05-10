@@ -1,0 +1,129 @@
+# Allocate memory and display usage.
+Cls()
+
+# Programs are executed in user memory.
+# The amount used so far, is the space
+# the code for this program consumes.
+Write("MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+# Calculate memory remaining
+SET number avail =
+	SysGet("N", 7) - SysGet("N", 8)
+
+Write("AVAIL: ", avail)
+WriteLn("")
+WriteLn("")
+
+# Any stored value is 1 byte
+
+# Integer: 4 bytes
+SET number a = 1234
+
+Write("01. MEMORY USED: ",  SysGet("N", 8))
+WriteLn("")
+
+# Float: 8 bytes
+SET number b = 456.789
+
+Write("02. MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+# Strings are length * 2 bytes
+SET string message = "HELLO WORLD"
+
+Write("03. MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+# Booleans are 1 byte
+SET boolean t = true
+SET boolean f = false
+
+Write("04. MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+# List: sum of elements' types
+SET list nums = [1, 2, 3]
+SET list floats = [1.0, 2.0, 3.0]
+SET list mixed = [123, 456.789, "Hello World"]
+
+Write("05. MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+# Map: total elements + sum of elements' types
+SET map user = {
+    "name": "Jim Jones",
+    "age": 36
+}
+
+Write("06. MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+# Function: sum of all types in body.
+FUNCTION sum(number a, number b)
+    SET number total = a + b
+    OUTPUT total
+RESULT number
+sum(100, 200)
+
+Write("07. MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+# For: Size of value + 2 bytes
+# (1 for key, 1 for value)
+# Memory is recovered after loop
+SET list numbers = [1.32, 4.56]
+EACH k,n IN numbers REPEAT
+	# Reclaim memory
+	UNSET k
+	UNSET n
+DONE
+
+Write("08. MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+# While loops work on global scope.
+# No memory is recovered at the end.
+# Any created variables remain in memory.
+READY list values
+READY number x
+WHILE x LT 10 REPEAT
+    Append(values, x)
+    x = x + 1
+DONE
+
+Write("09. MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+# Reclaim memory from the while assignment.
+UNSET values
+UNSET x
+Write("10. MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+# Memory remaining
+avail = SysGet("N", 7) - SysGet("N", 8)
+
+Write("11. MEMORY AVAIL: ", avail)
+WriteLn("")
+
+# Free up some memory.
+UNSET a
+UNSET b
+UNSET message
+UNSET t
+UNSET f
+UNSET nums
+UNSET floats
+UNSET mixed
+UNSET user
+UNSET numbers
+
+# Memory remaining
+avail = SysGet("N", 7) - SysGet("N", 8)
+
+Write("12. MEMORY USED: ", SysGet("N", 8))
+WriteLn("")
+
+Write("13. MEMORY AVAIL: ", avail)
+WriteLn("")

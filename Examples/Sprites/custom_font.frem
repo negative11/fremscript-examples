@@ -1,0 +1,123 @@
+# Sprite demo
+Cls()
+
+# Show sprite layer
+SysPut("B", 40, true)
+
+# Disable Pixel layer
+SysPut("B", 30, false)
+
+# Disable Grid Layer
+SysPut("B", 20, false)
+
+# Set color palette
+SysPut("N", 20, 0)
+
+# Background color
+SysPut("N", 21, 15)
+
+# Border color
+SysPut("N", 22, 0)
+
+# Enable sprite 0
+SysPut("B", 42, true)
+
+# Draw sprite 0
+SET number s = 0
+READY number y
+
+# Row 0
+spriteset(s, 0, y, 0, 0, 0, 0)
+spriteset(s, 1, y, 0, 0, 0, 0)
+spriteset(s, 2, y, 0, 0, 0, 0)
+spriteset(s, 3, y, 0, 0, 0, 0)
+spriteset(s, 4, y, 0, 0, 0, 0)
+spriteset(s, 5, y, 0, 0, 0, 0)
+spriteset(s, 6, y, 0, 0, 0, 0)
+spriteset(s, 7, y, 0, 0, 0, 0)
+
+# Row 1
+y = y + 1
+spriteset(s, 0, y, 0, 0, 0, 0)
+spriteset(s, 1, y, 0, 0, 0, 0)
+spriteset(s, 2, y, 0, 0, 0, 0)
+spriteset(s, 3, y, 0, 0, 0, 1)
+spriteset(s, 4, y, 0, 0, 0, 1)
+spriteset(s, 5, y, 0, 0, 0, 0)
+spriteset(s, 6, y, 0, 0, 0, 0)
+spriteset(s, 7, y, 0, 0, 0, 0)
+
+# Row 2
+y = y + 1
+spriteset(s, 0, y, 0, 0, 0, 0)
+spriteset(s, 1, y, 0, 0, 0, 0)
+spriteset(s, 2, y, 0, 0, 0, 1)
+spriteset(s, 3, y, 0, 0, 0, 1)
+spriteset(s, 4, y, 0, 0, 0, 1)
+spriteset(s, 5, y, 0, 0, 0, 1)
+spriteset(s, 6, y, 0, 0, 0, 0)
+spriteset(s, 7, y, 0, 0, 0, 0)
+
+# Row 3
+y = y + 1
+spriteset(s, 0, y, 0, 0, 0, 0)
+spriteset(s, 1, y, 0, 0, 0, 1)
+spriteset(s, 2, y, 0, 0, 0, 1)
+spriteset(s, 3, y, 0, 0, 0, 0)
+spriteset(s, 4, y, 0, 0, 0, 0)
+spriteset(s, 5, y, 0, 0, 0, 1)
+spriteset(s, 6, y, 0, 0, 0, 1)
+spriteset(s, 7, y, 0, 0, 0, 0)
+
+# Row 4
+y = y + 1
+spriteset(s, 0, y, 0, 0, 0, 0)
+spriteset(s, 1, y, 0, 0, 0, 1)
+spriteset(s, 2, y, 0, 0, 0, 1)
+spriteset(s, 3, y, 0, 0, 0, 1)
+spriteset(s, 4, y, 0, 0, 0, 1)
+spriteset(s, 5, y, 0, 0, 0, 1)
+spriteset(s, 6, y, 0, 0, 0, 1)
+spriteset(s, 7, y, 0, 0, 0, 0)
+
+# Row 5
+y = y + 1
+spriteset(s, 0, y, 0, 0, 0, 0)
+spriteset(s, 1, y, 0, 0, 0, 1)
+spriteset(s, 2, y, 0, 0, 0, 1)
+spriteset(s, 3, y, 0, 0, 0, 0)
+spriteset(s, 4, y, 0, 0, 0, 0)
+spriteset(s, 5, y, 0, 0, 0, 1)
+spriteset(s, 6, y, 0, 0, 0, 1)
+spriteset(s, 7, y, 0, 0, 0, 0)
+
+# Row 6
+y = y + 1
+spriteset(s, 0, y, 0, 0, 0, 0)
+spriteset(s, 1, y, 0, 0, 0, 1)
+spriteset(s, 2, y, 0, 0, 0, 1)
+spriteset(s, 3, y, 0, 0, 0, 0)
+spriteset(s, 4, y, 0, 0, 0, 0)
+spriteset(s, 5, y, 0, 0, 0, 1)
+spriteset(s, 6, y, 0, 0, 0, 1)
+spriteset(s, 7, y, 0, 0, 0, 0)
+
+# Row 7
+y = y + 1
+spriteset(s, 0, y, 0, 0, 0, 0)
+spriteset(s, 1, y, 0, 0, 0, 1)
+spriteset(s, 2, y, 0, 0, 0, 1)
+spriteset(s, 3, y, 0, 0, 0, 0)
+spriteset(s, 4, y, 0, 0, 0, 0)
+spriteset(s, 5, y, 0, 0, 0, 1)
+spriteset(s, 6, y, 0, 0, 0, 1)
+spriteset(s, 7, y, 0, 0, 0, 0)
+
+DrawSprites()
+WHILE true REPEAT
+	# Move to Random screen coordinates
+	SET number x = Random(0, 39)
+	SET number y = Random(0, 24)
+	SpritePos(s, x, y)
+	Wait(1)
+DONE

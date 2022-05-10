@@ -1,0 +1,6 @@
+Status(
+	"THIS IS A TEST!",
+	"This is a status message. It can be as long as it needs to be. It will wrap across 11 lines up to a total of 528 characters."
+)
+
+Wait(8)

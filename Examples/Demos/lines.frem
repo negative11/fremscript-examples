@@ -1,0 +1,46 @@
+Cls()
+SysPut("B", 30, true)
+ClearPixels()
+Sync()
+
+FUNCTION DrawHorizontalLine(number y)
+	SET number r = Random(0, 255)
+	SET number g = Random(0, 255)
+	SET number b = Random(0, 255)
+
+	EACH x in Range(0, 319) REPEAT
+		Pixel(x, y, r, g, b, 1)
+	DONE
+RESULT nothing
+
+FUNCTION DrawVerticalLine(number x)
+	SET number r = Random(0, 255)
+	SET number g = Random(0, 255)
+	SET number b = Random(0, 255)
+
+	EACH y in Range(0, 199) REPEAT
+		Pixel(x, y, r, g, b, 1)
+	DONE
+RESULT nothing
+
+WHILE true REPEAT
+	EACH y IN Range(0, 199) REPEAT
+		DrawHorizontalLine(y)
+		DrawPixels()
+	DONE
+
+	EACH x IN Range(0, 319) REPEAT
+		DrawVerticalLine(x)
+		DrawPixels()
+	DONE
+
+	EACH y IN Range(0, 199) REPEAT
+		DrawHorizontalLine(199-y)
+		DrawPixels()
+	DONE
+
+	EACH x IN Range(0, 319) REPEAT
+		DrawVerticalLine(319-x)
+		DrawPixels()
+	DONE
+DONE

@@ -1,0 +1,338 @@
+############################
+# Grid Development Utility #
+# FREM Computers Inc. 1985 #
+############################
+
+# Clean up any previous draws
+Cls()
+ClearGrid()
+ClearPixels()
+ClearSprites()
+Sync()
+
+# Enable the Grid layer
+SysPut("B", 20, true)
+
+# Enable the Pixel layer
+SysPut("B", 30, true)
+
+# Enable the Sprite layer
+SysPut("B", 40, true)
+
+# Set palette and colors
+SysPut("N", 20, 0)	# Palette
+SysPut("N", 21, 4)	# Background
+SysPut("N", 22, 4)	# Border
+SysPut("N", 23, 0)	# Font
+
+# Adjust the font settings
+# Turn off line spacing
+SysPut("N", 31, 0)   # Spacing top (px)
+SysPut("N", 32, -3)  # Spacing bottom (px)
+
+# Turn of vertical adjustment
+# This will align it precisely at edge
+# of top border.
+SysPut("N", 33, 0)
+
+# We can now increase the total number of
+# text lines to 25, since we have a bit more
+# space to deal with.
+SysPut("N", 30, 25)
+
+SET list xCoords = Range(0, 39)
+SET list yCoords = Range(0, 24)
+
+SET list primary = [128, 128, 128, 1]
+SET list secondary = [192, 192, 192, 1]
+
+# Draw a Grid point on the screen
+FUNCTION Point(
+	number x,
+	number y,
+	list color
+)
+	Grid(
+		x,
+		y,
+		color[0], # Red
+		color[1], # Green
+		color[2], # Blue
+		color[3]  # Alpha
+	)
+RESULT nothing
+
+# Draw a pixel on the screen
+FUNCTION Px(
+	number x,
+	number y,
+	list color
+)
+	Pixel(
+		x,
+		y,
+		color[0], # Red
+		color[1], # Green
+		color[2], # Blue
+		color[3]  # Alpha
+	)
+RESULT nothing
+
+# Draw a visual grid guide
+FUNCTION DrawGridBackground()
+	EACH y IN yCoords REPEAT
+		EACH x IN xCoords REPEAT
+			IF y MOD 2 EQ 0 THEN
+				IF x MOD 2 EQ 0 THEN
+					Point(x, y, primary)
+				ELSE
+					Point(x, y, secondary)
+				OK
+			ELSE
+				IF x MOD 2 EQ 0 THEN
+					Point(x, y, secondary)
+				ELSE
+					Point(x, y, primary)
+				OK
+			OK
+		DONE
+	DONE
+RESULT nothing
+
+# Show row/column numbers on grid
+FUNCTION DrawGridCoordinates()
+	EACH x IN Range(0, 39) REPEAT
+		IF x MOD 10 EQ 0 THEN
+			Write(x/10)
+		ELSE
+			Write(x MOD 10)
+		OK
+	DONE
+	WriteLn("1")
+	EACH x IN Range(1, 39) REPEAT
+		IF x EQ 10 OR x EQ 20 OR x EQ 30 THEN
+			Write(0)
+		ELSE
+			Write(" ")
+		OK
+	DONE
+	EACH y IN Range(2, 24) REPEAT
+		IF y EQ 10 OR y EQ 20 THEN
+			WriteLn(y)
+		ELSE
+			WriteLn(y MOD 10)
+		OK
+	DONE
+RESULT nothing
+
+# Disable this to hide visual grid guide
+DrawGridBackground()
+
+# Disable this to hide row/col numbers
+DrawGridCoordinates()
+
+# Draw all the rendered points
+DrawGrid()
+
+
+########################
+# Put Custom Code Here #
+########################
+
+SET list black	= [0, 0, 0, 1]
+SET list white	= [255, 255, 255, 1]
+SET list red	= [255, 0, 0, 1]
+SET list green	= [0, 255, 0, 1]
+SET list blue	= [64, 64, 255, 1]
+SET list yellow = [255, 255, 0, 1]
+SET list orange = [240, 128, 64, 1]
+SET list purple = [255, 0, 255, 1]
+
+#########################
+# Draw some grid points #
+#########################
+
+EACH x IN Range(0,39) REPEAT
+	Point(x, 20, green)
+DONE
+
+EACH x IN Range(0,39) REPEAT
+	Point(x, 10, yellow)
+DONE
+
+# Vertical lines
+EACH y IN Range(0, 24) REPEAT
+	Point(10, y, orange)
+	Point(20, y, orange)
+	Point(30, y, orange)
+DONE
+
+# Blue inner border
+EACH y IN [1, 23] REPEAT
+	EACH x IN Range(1, 38) REPEAT
+		Point(x, y, blue)
+	DONE
+DONE
+
+EACH y IN Range(1, 23) REPEAT
+	EACH x IN [1, 38] REPEAT
+		Point(x, y, blue)
+	DONE
+DONE
+
+# Various colored squares
+EACH y IN [2, 4, 6, 8] REPEAT
+	EACH x IN [2, 4, 6, 8] REPEAT
+		Point(x, y, orange)
+	DONE
+DONE
+
+EACH y IN Range(1, 23) REPEAT
+	EACH x IN [1, 38] REPEAT
+		Point(x, y, blue)
+	DONE
+DONE
+
+EACH y IN [2, 4, 6, 8] REPEAT
+	EACH x IN [2, 4, 6, 8] REPEAT
+		Point(x, y, orange)
+	DONE
+DONE
+
+EACH y IN [3, 5, 7, 9] REPEAT
+	EACH x IN [3, 5, 7, 9] REPEAT
+		Point(x, y, purple)
+	DONE
+DONE
+
+EACH y IN [3, 5, 7, 9] REPEAT
+	EACH x IN [2, 4, 6, 8] REPEAT
+		Point(x, y, black)
+	DONE
+DONE
+
+EACH y IN [2, 4, 6, 8] REPEAT
+	EACH x IN  [3, 5, 7, 9] REPEAT
+		Point(x, y, white)
+	DONE
+DONE
+
+####################
+# Draw some pixels #
+####################
+
+Px(88, 16, green)
+Px(89, 17, green)
+Px(90, 18, green)
+Px(91, 19, green)
+Px(92, 20, green)
+Px(93, 21, green)
+Px(94, 22, green)
+Px(95, 23, green)
+
+Px(96, 16, red)
+Px(97, 17, red)
+Px(98, 18, red)
+Px(99, 19, red)
+Px(100, 20, blue)
+Px(101, 21, blue)
+Px(102, 22, blue)
+Px(103, 23, blue)
+
+#####################
+# Draw some sprites #
+#####################
+
+# Enable first four sprites
+EACH s IN [42, 43, 44, 45] REPEAT
+	SysPut("B", s, true)
+DONE
+
+# Sprite data
+SET list data = [
+	[0, 0, 0, 0, 0, 0, 0 , 0],
+	[0, 1, 1, 1, 1, 1, 1 , 0],
+	[1, 0, 0, 0, 0, 0, 0 , 1],
+	[1, 0, 1, 0, 0, 1, 0 , 1],
+	[1, 0, 0, 0, 0, 0, 0 , 1],
+	[1, 0, 0, 1, 1, 0, 0 , 1],
+	[0, 1, 1, 1, 1, 1, 1 , 0],
+	[0, 0, 0, 0, 0, 0, 0 , 0]
+]
+
+# Draw sprites
+SET list sprites = [
+	{
+		"Data": data,
+		"Color": red,
+		"Pos": [96, 24],
+		"Scale": [0, 0]
+	},
+	{
+		"Data": data,
+		"Color": green,
+		"Pos": [168, 16],
+		"Scale": [1, 1]
+	},
+	{
+		"Data": data,
+		"Color": blue,
+		"Pos": [88, 88],
+		"Scale": [3, 3]
+	},
+	{
+		"Data": data,
+		"Color": black,
+		"Pos": [168, 88],
+		"Scale": [7, 7]
+	}
+]
+
+EACH num, sprite IN sprites REPEAT
+	SET list d = sprite["Data"]
+	EACH y, row IN d REPEAT
+		EACH x, state in row REPEAT
+			IF state EQ 1 THEN
+				# Sprite pixel on
+				SpriteSet(
+					num,
+					x,
+					y,
+					sprite["Color"][0],
+					sprite["Color"][1],
+					sprite["Color"][2],
+					1
+				)
+			ELSE
+				# Sprite pixel off
+				SpriteSet(
+					num,
+					x,
+					y,
+					sprite["Color"][0],
+					sprite["Color"][1],
+					sprite["Color"][2],
+					0
+				)
+			OK
+		DONE
+	DONE
+
+	SpritePos(
+		num,
+		sprite["Pos"][0],
+		sprite["Pos"][1]
+	)
+
+	SpriteScale(
+		num,
+		sprite["Scale"][0],
+		sprite["Scale"][1]
+	)
+
+DONE
+
+# Draw all the rendered points
+DrawGrid()
+DrawPixels()
+DrawSprites()

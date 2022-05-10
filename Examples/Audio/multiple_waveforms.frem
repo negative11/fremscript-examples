@@ -1,0 +1,111 @@
+SET map waveforms = {
+	"SINE": 0,
+	"TRIANGLE": 1,
+	"SQUARE": 2,
+	"SAW": 3,
+	"NOISE": 4
+}
+
+SET list shapes = [
+	waveforms["SINE"],
+	waveforms["TRIANGLE"],
+	waveforms["SQUARE"],
+	waveforms["SAW"],
+	waveforms["NOISE"]
+]
+
+# Available octave range 0-0
+SET list octaves = Range(3, 4)
+
+SET map notes = {
+	"C": 0,
+	"Cs": 1,
+	"D": 2,
+	"Eb": 3,
+	"E": 4,
+	"F": 5,
+	"Fs": 6,
+	"G": 7,
+	"Ab": 8,
+	"A": 9,
+	"As": 10,
+	"B": 11
+}
+
+SET list scale = [
+	notes["C"],
+	notes["D"],
+	notes["E"],
+	notes["F"],
+	notes["G"],
+	notes["A"],
+	notes["B"]
+]
+
+# ADSR Envelope shapes generated sounds.
+SET number attack = 0
+SET number decay = 0
+SET number sustain = 1
+SET number release = 0
+
+# Three independent audio channels are
+# available for layering sounds.
+SET number channel = 0
+
+# Opening a gate triggers
+# the playing of audio on a
+# channel.
+Gate(0, true)
+Gate(1, true)
+Gate(2, true)
+
+# Volume controls for each channel.
+# Range is -80dB to 0dB
+Volume(0, -6)
+Volume(1, -6)
+Volume(2, -12)
+
+EACH shape IN shapes REPEAT
+	EACH octave IN octaves REPEAT
+		EACH note IN scale REPEAT
+			Tone(
+				channel,
+				shape,
+				octave,
+				note,
+				attack,
+				decay,
+				sustain,
+				release
+			)
+			Tone(
+				channel+1,
+				shape,
+				octave+1,
+				note,
+				attack,
+				decay,
+				sustain,
+				release
+			)
+			Tone(
+				channel+2,
+				shape,
+				octave-2,
+				note,
+				attack,
+				decay,
+				sustain,
+				release
+			)
+			Wait(.1)
+		DONE
+	DONE
+DONE
+
+# Closing a gate finalizes
+# any playing audio on a
+# channel.
+Gate(0, false)
+Gate(1, false)
+Gate(2, false)

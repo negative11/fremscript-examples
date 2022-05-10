@@ -1,0 +1,61 @@
+# Draw color Grid squares on screen.
+Cls()
+
+# Enable the Grid
+SysPut("B", 20, true)
+
+SET list xCoords = Range(0, 39)
+SET list yCoords = Range(0, 24)
+
+EACH y IN yCoords REPEAT
+	EACH x IN xCoords REPEAT
+		SET number red = Random(0,255)
+		SET number green = Random(0, 255)
+		SET number blue = Random(0, 255)
+
+		Grid(x, y, red, green, blue, 1)
+	DONE
+DONE
+
+# Draw all the rendered points
+DrawGrid()
+
+# Now, let's adjust the font settings.
+# Turn off line spacing
+SysPut("N", 31, 0)  # Top pixels
+SysPut("N", 32, -3)  # Bottom pixels
+
+# Turn off vertical adjustment
+# This will align it precisely at edge
+# of top border.
+SysPut("N", 33, 0)
+
+# Turn off horizontal adjustment
+# This will align it precisely at edge
+# of the left border.
+SysPut("N", 34, 0)
+
+# Now, we can also increase the total
+# number of lines to 25, since we have
+# a bit more space to deal with.
+SysPut("N", 30, 25)
+
+# Fill screen with character.
+SET string char = "*"
+READY number x
+READY number y
+
+# Set Random font color from palette
+SysPut("N", 23, Random(0, 15))
+
+SET number maxLines = SysGet("N", 30)
+
+WHILE y LT maxLines REPEAT
+	WriteLn("")
+	WHILE x LT 40 REPEAT
+		x = x + 1
+		Write(char)
+	DONE
+	x = 0
+	y = y + 1
+DONE

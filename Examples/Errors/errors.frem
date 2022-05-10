@@ -1,0 +1,45 @@
+# Undefined FUNCTION
+SET list nums = Range(1,10)
+EACH n IN nums REPEAT
+    IF n LT 5 THEN
+        eatTacos(n)
+    OK
+DONE
+
+# Too large of Range to copy/iterate over.
+SET list nums = Range(0, 32767)
+EACH num IN nums REPEAT
+    WriteLn(num)
+DONE
+
+# Error inside for loop
+SET list nums = [1,2,3]
+EACH i IN nums REPEAT
+    # Bad declaration
+    SET thisShouldError = 1
+DONE
+
+# Error inside while loop
+SET list nums = [1,2,3]
+WHILE true REPEAT
+    # Bad declaration
+    SET thisShouldError = 1
+DONE
+
+# Error inside FUNCTION
+FUNCTION toast()
+    # Bad declaration
+    SET thisShouldError = 1
+RESULT nothing
+
+# Deep nested loop error
+SET list nums = [1,2,3]
+# Error inside FUNCTION
+FUNCTION toast()
+    EACH i IN nums REPEAT
+	    WHILE true REPEAT
+		    # Bad declaration
+		    SET thisShouldError = 1
+		DONE
+	DONE
+RESULT nothing

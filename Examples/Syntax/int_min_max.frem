@@ -1,0 +1,34 @@
+Cls()
+
+# Number min/max rollover
+SET number x = 2394238493439593453458239048
+SET number y = -239428342893482934530459435
+
+WriteLn(x, y)
+WriteLn(x+y)
+
+
+FUNCTION Exp(number base, number power)
+	SET number p = 1
+
+	IF power LT 0 THEN
+		WriteLn("Only positive numbers please")
+		OUTPUT base
+	OK
+
+	IF power EQ 0 THEN
+		OUTPUT 1
+	OK
+
+	SET number res = base
+
+	WHILE p LT power REPEAT
+		res = res * base
+		p = p + 1
+	DONE
+
+	OUTPUT res
+RESULT number
+
+# Overflow!
+WriteLn(Exp(2, 31))

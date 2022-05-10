@@ -1,0 +1,94 @@
+Cls()
+SysPut("B", 30, true)
+
+READY number start
+READY number end
+SET number ySize = 199
+SET number xSize = 319
+
+FUNCTION StartBenchmark()
+	start = Timestamp()
+RESULT nothing
+
+FUNCTION EndBenchmark()
+	end = Timestamp()
+RESULT nothing
+
+FUNCTION ShowResults()
+	WriteLn(
+		"Total Time: "
+		+ ToStr(end-start)
+		+ " seconds"
+	)
+RESULT nothing
+
+FUNCTION Clear()
+	# Clear pixel draws
+	WriteLn("Clearing Pixels...")
+	ClearPixels()
+	DrawPixels()
+	Sync()
+RESULT nothing
+
+# This is slower since pixel layer is drawn
+# after each individual pixel is set
+Clear()
+WriteLn("Draw called after each pixel")
+StartBenchmark()
+EACH y in Range(0, ySize) REPEAT
+	EACH x in Range(0, xSize) REPEAT
+		Pixel(
+			x,
+			y,
+			0,
+			255,
+			0,
+			1
+		)
+		DrawPixels()
+	DONE
+DONE
+EndBenchmark()
+ShowResults()
+Wait(2)
+
+# This is faster since pixel layer is drawn
+# after all pixels have been set.
+Clear()
+WriteLn("Draw called after setting all pixels")
+StartBenchmark()
+EACH y in Range(0, ySize) REPEAT
+	EACH x in Range(0, xSize) REPEAT
+		Pixel(
+			x,
+			y,
+			255,
+			0,
+			0,
+			1
+		)
+	DONE
+DONE
+DrawPixels()
+EndBenchmark()
+ShowResults()
+Wait(2)
+
+Clear()
+WriteLn("Random pixel colors")
+StartBenchmark()
+EACH y in Range(0, ySize) REPEAT
+	EACH x in Range(0, xSize) REPEAT
+		Pixel(
+			x,
+			y,
+			Random(0, 255),
+			Random(0, 255),
+			Random(0, 255),
+			1
+		)
+	DONE
+DONE
+DrawPixels()
+EndBenchmark()
+ShowResults()

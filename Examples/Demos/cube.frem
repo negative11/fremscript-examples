@@ -1,0 +1,52 @@
+SysPut("B", 30, true)
+Cls()
+ClearPixels()
+Sync()
+
+# Draw top, bottom
+EACH x in Range(60, 120) REPEAT
+	EACH y in [60, 120] REPEAT
+		Pixel(x, y, 255, 0, 0, 1)
+	DONE
+DONE
+
+# Draw sides
+EACH x in [60, 120] REPEAT
+	EACH y in Range(60, 120) REPEAT
+		Pixel(x, y, 255, 0, 0, 1)
+	DONE
+DONE
+
+# Draw top, bottom
+EACH x in Range(90, 150) REPEAT
+	EACH y in [30, 90] REPEAT
+		Pixel(x, y, 255, 0, 0, 1)
+	DONE
+DONE
+
+# Draw sides
+EACH x in [90, 150] REPEAT
+	EACH y in Range(30, 90) REPEAT
+		Pixel(x, y, 255, 0, 0, 1)
+	DONE
+DONE
+
+# Slope: y2-y1 / x2-x1
+SET number x1 = 60
+SET number x2 = 90
+SET number y1 = 30
+SET number y2 = 60
+
+SET number m = (y2 - y1) / (x2 - x1)
+WriteLn(m)
+EACH x in Range(x1, x2) REPEAT
+	Pixel(x, -x+x1*2, 255, 0, 0, 1)
+	Pixel(x, -x+x1*3, 255, 0, 0, 1)
+DONE
+
+EACH x in Range(x1*2, ToInt(x1*2.5)) REPEAT
+	Pixel(x, -x+x1*3, 255, 0, 0, 1)
+	Pixel(x, -x+x1*4, 255, 0, 0, 1)
+DONE
+
+DrawPixels()

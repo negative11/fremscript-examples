@@ -1,0 +1,83 @@
+Cls()
+
+# Disable Grid Layer
+SysPut("B", 20, false)
+
+# Disable Pixel layer
+SysPut("B", 30, false)
+
+# Show sprite layer
+SysPut("B", 40, true)
+
+# Set color palette
+SysPut("N", 20, 0)
+
+# Background color
+SysPut("N", 21, 0)
+
+# Border color
+SysPut("N", 22, 0)
+
+SET list spriteMap = [
+	[0, 0, 0, 0, 0, 0, 0 , 0],
+	[0, 1, 1, 1, 1, 1, 1 , 0],
+	[1, 0, 0, 0, 0, 0, 0 , 1],
+	[1, 0, 1, 0, 0, 1, 0 , 1],
+	[1, 0, 0, 0, 0, 0, 0 , 1],
+	[1, 0, 0, 1, 1, 0, 0 , 1],
+	[0, 1, 1, 1, 1, 1, 1 , 0],
+	[0, 0, 0, 0, 0, 0, 0 , 0]
+]
+
+# Draw sprites
+SET list sprites = Range(0, 31)
+EACH s IN sprites REPEAT
+	# Enable sprite display
+	# Boolean flags for sprites:
+	#	42-73
+	SysPut("B", 42 + s, true)
+
+	# Pick a random color for each sprite
+	SET number r = Random(0, 255)
+	SET number g = Random(0, 255)
+	SET number b = Random(0, 255)
+
+	EACH y, row in spriteMap REPEAT
+		EACH x, state in row REPEAT
+			IF state EQ 1 THEN
+				SpriteSet(
+					s, x, y, r, g, b, 1
+				)
+			ELSE
+				# Transparent
+				SpriteSet(
+					s, x, y, 0, 0, 0, 0
+				)
+			OK
+		DONE
+	DONE
+	DrawSprites()
+DONE
+
+# Move the sprites around
+WHILE true REPEAT
+    EACH s IN sprites REPEAT
+        # Move to Random screen coordinates
+        SpritePos(
+			s,
+			Random(-64, 320),
+			Random(-64, 200)
+		)
+
+		# Set random scale
+		SET number xScale = Random(0, 7)
+		SET number yScale = Random(0, 7)
+		SpriteScale(
+			s,
+			xScale,
+			yScale
+		)
+
+		Wait(.0125)
+    DONE
+DONE

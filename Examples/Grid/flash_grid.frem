@@ -1,0 +1,24 @@
+# Disable the text layer
+SysPut("B", 10, false)
+
+# Draw color Grid squares on screen.
+SET list xCoords = Range(0, 39)
+SET list yCoords = Range(0, 24)
+
+EACH y IN yCoords REPEAT
+	EACH x IN xCoords REPEAT
+		SET number red = Random(0,255)
+		SET number green = Random(0, 255)
+		SET number blue = Random(0, 255)
+
+		Grid(x, y, red, green, blue, 1)
+	DONE
+DONE
+
+DrawGrid()
+
+# Flash the Grid on/off
+WHILE true REPEAT
+	SysPut("B", 20, not SysGet("B", 20))
+	Wait(1)
+DONE

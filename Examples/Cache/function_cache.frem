@@ -1,0 +1,10 @@
+FUNCTION Print(string s)
+	WriteLn(s)
+RESULT nothing
+
+CachePut(0, Print)
+
+CacheGet(0)("Hello")
+
+SET function Greeting = CacheGet(0)
+Greeting("HELLO")

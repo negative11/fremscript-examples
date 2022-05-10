@@ -1,0 +1,76 @@
+# Multiple sprites demo
+Cls()
+ClearSprites()
+
+
+# Show sprite layer
+SysPut("B", 40, true)
+
+# Hide Grid layers
+SysPut("B", 20, true)
+
+# Generate sprites with Random pixels
+SET list xCoords = Range(0, 7)
+SET list yCoords = Range(0, 7)
+
+# Draw sprites
+SET list sprites = Range(0, 31)
+EACH s IN sprites REPEAT
+	# Enable sprite display
+	# Boolean flags for sprites: 42 - 73
+	SysPut("B", 42 + s, true)
+
+	# Draw the sprite pixels
+    EACH x IN xCoords REPEAT
+        EACH y IN yCoords REPEAT
+            SET number r = Random(0, 255)
+            SET number g = Random(0, 255)
+            SET number b = Random(0, 255)
+            SET number a = Random(0, 1)
+            SpriteSet(s, x, y, r, g, b, a)
+			UNSET y
+			UNSET r
+			UNSET g
+			UNSET b
+			UNSET a
+        DONE
+		UNSET x
+    DONE
+	UNSET s
+DONE
+UNSET xCoords
+UNSET yCoords
+
+DrawSprites()
+
+# Benchmark runtime
+SET number startTime = Timestamp()
+
+# Move the sprites around
+WHILE true REPEAT
+    EACH s IN sprites REPEAT
+        # Move to Random screen coordinates
+        SpritePos(
+			s,
+			Random(-64, 320),
+			Random(-64, 200)
+		)
+
+		SET number scaleX = Random(0,7)
+		SET number scaleY = scaleX
+
+		SpriteScale(
+		    s,
+		    scaleX,
+		    scaleY
+        )
+
+		Wait(.1)
+    DONE
+	Cls()
+	WriteLn("MEMORY:", SysGet("N", 8))
+	WriteLn(
+		"RUNTIME:", 
+		Timestamp() - startTime
+	)
+DONE

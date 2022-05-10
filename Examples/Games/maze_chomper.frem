@@ -1,0 +1,752 @@
+#•∞өÒѳθ←↑→↓
+
+# Character collision zones
+READY list collisions
+
+# Character collectable zones
+READY list pillsToChomp
+
+# Player location
+READY number playerPosX
+READY number playerPosY
+
+# The player score.
+SET number score = 0
+
+# Build a sprite from list of points and colors
+FUNCTION BuildSprite(
+	number s,
+	list points,
+	list colors
+)
+	EACH y, row IN points REPEAT
+		EACH x, i IN row REPEAT
+			IF Size(colors) GT i THEN
+				SpriteSet(
+					s, x, y,
+					colors[i]["r"],
+					colors[i]["g"],
+					colors[i]["b"],
+					colors[i]["a"]
+				)
+			OK
+		DONE
+	DONE
+RESULT nothing
+
+# Build the level components
+FUNCTION BuildLevel()
+	BuildCollisionWalls()
+	BuildNonCollisionWalls()
+	BuildPills()
+RESULT nothing
+
+FUNCTION BuildPills()
+	SET list points = [
+		[19, 7],
+		[209, 7],
+		[309, 7],
+		[49, 38],
+		[99, 18],
+		[129, 28],
+		[129, 38],
+		[7, 50],
+		[49, 50],
+		[99, 50],
+		[259, 50],
+		[49, 60],
+		[49, 99],
+		[239, 99],
+		[7, 61],
+		[49, 110],
+		[7, 117],
+		[49, 122],
+		[49, 134],
+		[129, 134],
+		[9, 147],
+		[209, 147],
+		[49, 164],
+		[139, 174],
+		[171, 174],
+		[9, 191],
+		[209, 191],
+		[309, 191]
+	]
+
+	EACH p IN points REPEAT
+		SET number x = p[0]
+		SET number y = p[1]
+		DrawPill(x, y)
+		Append(pillsToChomp, [x, y])
+	DONE
+RESULT nothing
+
+FUNCTION DrawPill(number x, number y)
+	Pixel(x, y, 240, 128, 0, 1)
+	Pixel(x+1, y, 240, 128, 0, 1)
+	Pixel(x, y+1, 240, 128, 0, 1)
+	Pixel(x+1, y+1, 240, 128, 0, 1)
+RESULT nothing
+
+FUNCTION ClearPill(number x, number y)
+	Pixel(x, y, 0, 0, 0, 0)
+	Pixel(x+1, y, 0, 0, 0, 0)
+	Pixel(x, y+1, 0, 0, 0, 0)
+	Pixel(x+1, y+1, 0, 0, 0, 0)
+	DrawPixels()
+RESULT nothing
+
+FUNCTION BuildCollisionWalls()
+	# X,Y pairs
+	SET list points = [
+		[0, 2],
+		[0, 4],
+		[0, 16],
+
+		[2, 2],
+		[2, 4],
+		[2, 8],
+		[2, 10],
+		[2, 12],
+		[2, 16],
+		[2, 20],
+		[2, 22],
+
+		[4, 2],
+		[4, 4],
+		[4, 8],
+		[4, 10],
+		[4, 12],
+		[4, 16],
+		[4, 20],
+		[4, 22],
+
+		[8, 2],
+		[8, 4],
+		[8, 6],
+		[8, 8],
+		[8, 10],
+		[8, 14],
+		[8, 16],
+		[8, 18],
+		[8, 22],
+		[8, 24],
+
+		[10, 2],
+		[10, 4],
+		[10, 6],
+		[10, 8],
+		[10, 10],
+		[10, 14],
+		[10, 18],
+		[10, 22],
+
+		[12, 8],
+		[12, 10],
+		[12, 14],
+		[12, 18],
+		[12, 22],
+
+		[14, 0],
+		[14, 1],
+		[14, 2],
+		[14, 4],
+		[14, 8],
+		[14, 10],
+		[14, 14],
+		[14, 16],
+		[14, 18],
+		[14, 22],
+
+		[15, 0],
+		[15, 1],
+		[15, 22],
+		[15, 24],
+
+		[18, 6],
+		[18, 8],
+		[18, 10],
+		[18, 12],
+		[18, 14],
+		[18, 16],
+
+		[19, 0],
+		[19, 1],
+		[19, 17],
+		[19, 19],
+		[19, 21],
+		[19, 23],
+		[19, 24],
+
+		[20, 6],
+		[20, 8],
+		[20, 10],
+		[20, 12],
+		[20, 14],
+		[20, 16],
+
+		[22, 8],
+		[22, 10],
+
+		[23, 0],
+		[23, 1],
+		[23, 23],
+		[23, 24],
+
+		[24, 0],
+		[24, 1],
+		[24, 2],
+		[24, 4],
+		[24, 8],
+		[24, 10],
+		[24, 16],
+		[24, 18],
+		[24, 23],
+		[24, 24],
+
+		[26, 8],
+		[26, 10],
+
+		[28, 2],
+		[28, 4],
+		[28, 6],
+		[28, 8],
+		[28, 10],
+		[28, 16],
+		[28, 18],
+		[28, 20],
+		[28, 22],
+
+		[30, 2],
+		[30, 4],
+		[30, 6],
+		[30, 8],
+		[30, 10],
+		[30, 16],
+		[30, 18],
+		[30, 20],
+		[30, 22],
+
+		[32, 20],
+		[32, 22],
+
+		[33, 20],
+		[33, 22],
+
+		[35, 2],
+		[35, 4],
+		[35, 8],
+		[35, 10],
+		[35, 12],
+		[35, 14],
+		[35, 16],
+		[35, 20],
+		[35, 22],
+
+		[37, 2],
+		[37, 4],
+		[37, 8],
+		[37, 10],
+		[37, 12],
+		[37, 14],
+		[37, 16],
+		[37, 20],
+		[37, 22]
+	]
+
+	READY list blocks
+
+	EACH p IN points REPEAT
+		Append(blocks, {
+			"x": p[0], "y": p[1],
+			"r": 32, "g": 32, "b": 32, "a": 1,
+			"collision": true
+		})
+	DONE
+
+	DrawBlocks(blocks)
+RESULT nothing
+
+# Cut the number of collision checks down
+# by drawing many blocks without collision.
+FUNCTION BuildNonCollisionWalls()
+	# X,Y pairs
+	SET list points = [
+		[1, 2],
+		[1, 4],
+		[1, 16],
+
+		[2, 9],
+		[2, 11],
+		[2, 21],
+
+		[3, 2],
+		[3, 4],
+		[3, 8],
+		[3, 12],
+		[3, 16],
+		[3, 20],
+		[3, 22],
+
+		[4, 3],
+		[4, 9],
+		[4, 11],
+		[4, 21],
+
+		[8, 3],
+		[8, 5],
+		[8, 7],
+		[8, 9],
+		[8, 15],
+		[8, 17],
+		[8, 23],
+
+		[9, 2],
+		[9, 10],
+		[9, 14],
+		[9, 18],
+		[9, 22],
+
+		[10, 3],
+		[10, 5],
+		[10, 7],
+
+
+		[11, 8],
+		[11, 10],
+		[11, 14],
+		[11, 18],
+		[11, 22],
+
+		[13, 8],
+		[13, 10],
+		[13, 14],
+		[13, 18],
+		[13, 22],
+
+		[14, 3],
+		[14, 9],
+		[14, 15],
+		[14, 17],
+
+		[15, 23],
+
+		[18, 7],
+		[18, 9],
+		[18, 11],
+		[18, 13],
+		[18, 15],
+
+		[19, 6],
+		[19, 16],
+		[19, 18],
+		[19, 20],
+		[19, 22],
+
+		[20, 7],
+		[20, 11],
+		[20, 13],
+		[20, 15],
+
+		[21, 8],
+		[21, 10],
+
+		[23, 8],
+		[23, 10],
+
+		[24, 3],
+		[24, 17],
+		[24, 19],
+
+		[25, 8],
+		[25, 10],
+
+		[27, 8],
+		[27, 10],
+
+		[28, 3],
+		[28, 5],
+		[28, 7],
+		[28, 17],
+		[28, 19],
+		[28, 21],
+
+		[29, 2],
+		[29, 10],
+		[29, 16],
+		[29, 22],
+
+		[30, 3],
+		[30, 5],
+		[30, 7],
+		[30, 9],
+		[30, 17],
+		[30, 19],
+
+		[31, 20],
+		[31, 22],
+
+		[34, 20],
+		[34, 22],
+
+		[35, 3],
+		[35, 9],
+		[35, 11],
+		[35, 13],
+		[35, 15],
+
+		[36, 2],
+		[36, 4],
+		[36, 8],
+
+		[36, 16],
+		[36, 20],
+		[36, 22],
+
+		[37, 3],
+		[37, 9],
+		[37, 11],
+		[37, 13],
+		[37, 15],
+		[37, 21]
+	]
+
+	READY list blocks
+
+	EACH p IN points REPEAT
+		Append(blocks, {
+			"x": p[0], "y": p[1],
+			"r": 32, "g": 32, "b": 32, "a": 1, "collision": false
+		})
+	DONE
+
+	DrawBlocks(blocks)
+RESULT nothing
+
+# Build the character sprites
+FUNCTION BuildCharacter()
+	SET list characterSpriteSide = [
+		[3, 1, 1, 1, 1, 1, 1, 3],
+		[1, 0, 0, 0, 0, 0, 0, 1],
+		[1, 0, 0, 0, 0, 1, 0, 1],
+		[1, 0, 0, 0, 0, 0, 0, 1],
+		[1, 0, 0, 2, 2, 2, 2, 3],
+		[1, 0, 0, 2, 2, 2, 2, 3],
+		[1, 0, 0, 0, 0, 0, 0, 1],
+		[3, 1, 1, 1, 1, 1, 1, 3]
+	]
+	SET list characterSpriteTop = [
+		[3, 1, 2, 2, 2, 2, 1, 3],
+		[1, 0, 0, 0, 0, 0, 0, 1],
+		[1, 0, 1, 0, 0, 1, 0, 1],
+		[1, 0, 0, 0, 0, 0, 0, 1],
+		[1, 0, 0, 0, 0, 0, 0, 1],
+		[1, 0, 0, 0, 0, 0, 0, 1],
+		[1, 0, 0, 0, 0, 0, 0, 1],
+		[3, 1, 1, 1, 1, 1, 1, 3]
+	]
+
+	SET map bodyColor = {
+		"r": 243, "g": 213, "b": 245, "a": 1
+	}
+
+	SET map borderColor = {
+		"r": 0, "g": 0, "b": 0, "a": 1
+	}
+
+	SET map mouthColor = {
+		"r": 128, "g": 128, "b": 128, "a": 1
+	}
+
+	SET map transparent = {
+		"r": 0, "g": 0, "b": 0, "a": 0
+	}
+
+	SET list characterColors = [
+		bodyColor,
+		borderColor,
+		mouthColor,
+		transparent
+	]
+
+	BuildSprite(
+		0,
+		characterSpriteSide,
+		characterColors
+	)
+	BuildSprite(
+		1,
+		characterSpriteTop,
+		characterColors
+	)
+
+	SysPut("B", 42, true)
+	SysPut("B", 43, false)
+	SpriteScale(0, 1, 1)
+	SpriteScale(1, 1, 1)
+RESULT nothing
+
+FUNCTION DrawBlocks(list blocks)
+	EACH block IN blocks REPEAT
+		Grid(
+			block["x"],
+			block["y"],
+			block["r"],
+			block["g"],
+			block["b"],
+			block["a"]
+		)
+
+		IF block["collision"] EQ true THEN
+			AddCollision(
+				block["x"],
+				block["y"]
+			)
+		OK
+	DONE
+RESULT nothing
+
+FUNCTION AddCollision(number x, number y)
+	Append(collisions, [x*8, y*8])
+RESULT nothing
+
+FUNCTION CheckCollision(number x, number y)
+	EACH c IN collisions REPEAT
+		IF
+			x GTE c[0]-15 AND x LTE c[0]+7
+			AND
+			y GTE c[1]-15 AND y LTE c[1]+7
+		THEN
+			OUTPUT true
+		OK
+	DONE
+	OUTPUT false
+RESULT boolean
+
+FUNCTION MoveUp()
+	SET number yMin = 0
+
+	IF
+		playerPosX GTE 128 AND
+		playerPosX LTE 168
+	THEN
+		yMin = -24
+	OK
+
+	IF playerPosY GT yMin THEN
+		IF playerPosY LT -8 THEN
+			SetPlayerPos(playerPosX, 200)
+		ELSE
+			SetPlayerPos(
+				playerPosX, playerPosY-4
+			)
+		OK
+		FacePlayerUp()
+	OK
+RESULT nothing
+
+FUNCTION MoveDown()
+	SET number yMax = 184
+
+	IF
+		playerPosX GTE 128 AND
+		playerPosX LTE 168
+	THEN
+		yMax = 200
+	OK
+
+	IF playerPosY LT yMax THEN
+		IF playerPosY GT 192 THEN
+			SetPlayerPos(playerPosX, -24)
+		ELSE
+			SetPlayerPos(
+				playerPosX, playerPosY+4
+			)
+		OK
+		FacePlayerDown()
+	OK
+RESULT nothing
+
+FUNCTION MoveLeft()
+	IF
+		playerPosX GT 0 AND
+		playerPosY GTE 0 AND
+		playerPosY LTE 184
+	THEN
+		SetPlayerPos(playerPosX-4, playerPosY)
+		FacePlayerLeft()
+	OK
+RESULT nothing
+
+FUNCTION MoveRight()
+	IF
+		playerPosX LT 304 AND
+		playerPosY GTE 0 AND
+		playerPosY LTE 184
+	THEN
+		SetPlayerPos(playerPosX+4,playerPosY)
+		FacePlayerRight()
+	OK
+RESULT nothing
+
+FUNCTION FacePlayerRight()
+	SpriteFlip(0, 1, 1)
+	SysPut("B", 42, true)
+	SysPut("B", 43, false)
+RESULT nothing
+
+FUNCTION FacePlayerLeft()
+	SpriteFlip(0, -1, 1)
+	SysPut("B", 42, true)
+	SysPut("B", 43, false)
+RESULT nothing
+
+FUNCTION FacePlayerDown()
+	SpriteFlip(1, 1, -1)
+	SysPut("B", 42, false)
+	SysPut("B", 43, true)
+RESULT nothing
+
+FUNCTION FacePlayerUp()
+	SpriteFlip(1, 1, 1)
+	SysPut("B", 42, false)
+	SysPut("B", 43, true)
+RESULT nothing
+
+FUNCTION SetPlayerPos(number x, number y)
+	IF CheckCollision(x, y) EQ false THEN
+		playerPosX = x
+		playerPosY = y
+		EatPill(x, y)
+	OK
+RESULT nothing
+
+FUNCTION EatPill(number x, number y)
+	EACH p, pill in pillsToChomp REPEAT
+		IF
+			(
+				pill[0] LTE x + 10
+				AND
+				pill[0] GTE x - 10
+			)
+			AND
+			(
+				pill[1] LTE y + 10
+				AND
+				pill[1] GTE y - 10
+		  	)
+			THEN
+			score = score + 1
+			Remove(pillsToChomp, p)
+			ClearPill(pill[0], pill[1])
+		OK
+	DONE
+RESULT nothing
+
+FUNCTION UpdatePlayerPos()
+	SpritePos(0, playerPosX, playerPosY)
+	SpritePos(1, playerPosX, playerPosY)
+RESULT nothing
+
+FUNCTION CheckMoveInput()
+	IF KeyDown() EQ "UP" THEN
+		MoveUp()
+		OUTPUT nothing
+	OK
+	IF KeyDown() EQ "DOWN" THEN
+		MoveDown()
+		OUTPUT nothing
+	OK
+	IF KeyDown() EQ "LEFT" THEN
+		MoveLeft()
+		OUTPUT nothing
+	OK
+	IF KeyDown() EQ "RIGHT" THEN
+		MoveRight()
+		OUTPUT nothing
+	OK
+RESULT nothing
+
+FUNCTION SetUp()
+	# Set font color
+	SysPut("N", 23, 1)
+
+	# Enable grid layer
+	SysPut("B", 20, true)
+
+	# Enable pixel layer
+	SysPut("B", 30, true)
+
+	# Background Color
+	SysPut("N", 21, 9)
+
+	# Enable sprite layer
+	SysPut("B", 40, true)
+
+	# Connect host keyboard to system
+	SysPut("B", 5, true)
+
+	# Turn off line spacing
+	SysPut("N", 31, 0)  # Top pixels
+	SysPut("N", 32, -3)  # Bottom pixels
+
+	# Turn off vertical adjustment
+	# This will align it precisely at edge
+	# of top border.
+	SysPut("N", 33, 0)
+
+	# Turn off horizontal adjustment
+	# This will align it precisely at edge
+	# of the left border.
+	SysPut("N", 34, 0)
+
+	# Increase the total number of lines
+	SysPut("N", 30, 25)
+RESULT nothing
+
+FUNCTION TearDown()
+	ClearSprites()
+	ClearPixels()
+	ClearGrid()
+	Sync()
+	Cls()
+	WriteLn("Loading...")
+	Wait(1)
+	Cls()
+RESULT nothing
+
+FUNCTION SpawnPlayer()
+	SetPlayerPos(0, 0)
+	FacePlayerRight()
+RESULT nothing
+
+FUNCTION ShowDebugInfo()
+	WriteLn(playerPosX, playerPosY)
+	WriteLn(playerPosX/8, playerPosY/8)
+RESULT nothing
+
+FUNCTION DrawArrows()
+	WriteLn("                 ↑   ↑")
+	EACH _ IN Range(0, 22) REPEAT
+		WriteLn("")
+	DONE
+	WriteLn("                 ↓   ↓")
+RESULT nothing
+
+# Game Loop
+TearDown()
+SetUp()
+BuildCharacter()
+BuildLevel()
+DrawGrid()
+DrawPixels()
+DrawSprites()
+DrawArrows()
+Sync()
+
+SpawnPlayer()
+
+WHILE true REPEAT
+	CheckMoveInput()
+	UpdatePlayerPos()
+DONE

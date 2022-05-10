@@ -1,0 +1,95 @@
+# FREM Boot program
+Cls()
+
+# Enable text layer
+SysPut("B", 10, true)
+
+# Disable the Grid layer
+SysPut("B", 20, false)
+
+# Disable the Pixel layer
+SysPut("B", 30, false)
+
+# Disable the Sprite layer
+SysPut("B", 40, false)
+
+WriteLn("Booting...")
+
+# Beep!
+Wait(1)
+Tone(
+	0,
+	1,
+	5,
+	10,
+	0,
+	0,
+	1,
+	0
+)
+Gate(0, true)
+Wait(.33)
+Gate(0, false)
+Cls()
+
+# Company Header
+WriteLn(SysGet("S", 0))
+WriteLn(SysGet("S", 1))
+WriteLn(SysGet("S", 2))
+WriteLn(SysGet("S", 3))
+WriteLn(SysGet("S", 8))
+WriteLn(SysGet("S", 0))
+WriteLn("")
+
+Wait(.3)
+
+# User Register Memory
+Write(
+    SysGet("S", 4),
+    ": ",
+    SysGet("N", 5),
+    " ",
+    SysGet("S", 7)
+)
+WriteLn("")
+
+Wait(.3)
+
+# System Register Memory
+Write(
+    SysGet("S", 5),
+    ": ",
+    SysGet("N", 5),
+    " ",
+    SysGet("S", 7)
+)
+WriteLn("")
+
+Wait(.3)
+
+# Program Memory
+Write(
+    SysGet("S", 6),
+    ": ",
+    SysGet("N", 7),
+    " ",
+    SysGet("S", 7)
+)
+
+WriteLn("")
+
+Wait(1)
+
+WriteLn("Press RUN (F5) to execute program.")
+WriteLn("Press HALT (F6) to halt program.")
+WriteLn("Press CLEAR (F7) to clear screen text.")
+WriteLn("Press RESET (F11) to restart computer.")
+WriteLn("")
+
+Wait(.5)
+WriteLn("Start new program: CTRL+N")
+WriteLn("Open program for editing: CTRL+O")
+WriteLn("Save program: CTRL+S")
+
+Wait(.5)
+WriteLn("", "READY")

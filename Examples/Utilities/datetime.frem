@@ -1,0 +1,161 @@
+FUNCTION GetYearForTimestamp(number time)
+	# 31557600 seconds in 365.25 days
+	# 1970 is EPOCH year
+	# RESULT is years UTC
+	SET number years = ToInt(time / 31557600)
+	OUTPUT 1970 + years
+RESULT number
+
+# Leap year calculation.
+FUNCTION IsLeapYear(number year)
+    OUTPUT
+		year MOD 4 EQ 0
+		AND (
+			(year MOD 100 NEQ 0)
+			OR (year MOD 400 EQ 0)
+		)
+RESULT boolean
+
+FUNCTION GetMonthForTimestamp(number time)
+	# 2629800 seconds in 365.25/12 days
+	# Round up fractions of a month
+	# RESULT is months UTC
+	SET number months =
+		Round((time / 2629800)+.5) MOD 12
+	OUTPUT months
+RESULT number
+
+FUNCTION GetDayOfYearForTimestamp(number time)
+	# 86400 seconds in a day
+	# 365.25 days in a year
+	# Round up fractions of a day.
+	# RESULT is day number of the year
+	SET number days =
+		Round(((time / 86400) MOD 365.25) + .5)
+	OUTPUT days
+RESULT number
+
+FUNCTION GetDayOfMonth(number time)
+	SET number year =
+		GetYearForTimestamp(time)
+	SET list monthDays =
+		GetMonthDaysForYear(year)
+	SET number days =
+		GetDayOfYearForTimestamp(time)
+	SET number month =
+		GetMonthForTimestamp(time)
+
+	# Subtract days for each month that has
+	# passed
+	EACH m,d in monthDays REPEAT
+		IF m LT month-1 THEN
+			days = days - monthDays[m]
+		OK
+	DONE
+
+	OUTPUT days
+RESULT number
+
+FUNCTION GetMonthDaysForYear(number year)
+	SET list monthDays = [
+		31,
+		28,
+		31,
+		30,
+		31,
+		30,
+		31,
+		31,
+		30,
+		31,
+		30,
+		31
+	]
+
+	# February has 29 days during leap years.
+	IF IsLeapYear(year) THEN
+		monthDays[1] = 29
+	OK
+
+	OUTPUT monthDays
+RESULT list
+
+FUNCTION GetHoursForTimestamp(number time)
+	# 86400 seconds in a day.
+	# 3600 seconds in an hour.
+	# RESULT is hours UTC.
+	SET number hours
+		= ToInt((time MOD 86400) / 3600)
+
+	# Timezone offset from UTC
+	# FREM is located on the Pacific Coast,
+	# so we use:
+	#	 PST America/Los_Angeles (UTC-8)
+	# Adjust to your preferences.
+	hours = hours -8
+
+	# Adjust for timezone offsets that
+	# go outside 0-23 hour Range.
+	IF hours LT 0 THEN
+		hours = 24 + hours
+	OK
+
+	IF hours GT 23 THEN
+		hours = hours - 24
+	OK
+
+	OUTPUT hours
+RESULT number
+
+FUNCTION GetMinutesForTimestamp(number time)
+	# 86400 seconds in a day.
+	# 60 minutes in an hour
+	# RESULT is minuts into the hour.
+	OUTPUT ToInt(
+		((time MOD 86400) / 60) MOD 60
+	)
+RESULT number
+
+FUNCTION GetSecondsForTimestamp(number time)
+	# 86400 seconds in a day.
+	# RESULT is seconds into the minute.
+	OUTPUT time MOD 60
+RESULT number
+
+WriteLn(SysGet("N", 4))
+
+# Grab the test boot timestamp recorded
+# during factory installation
+SET number installDate = SysGet("N", 511)
+
+# Get the timestamp recorded at last power on
+SET number bootTime = SysGet("N", 0)
+
+# Get the current timestamp
+SET number now = Timestamp()
+
+
+SET number year =
+	GetYearForTimestamp(now)
+SET number month =
+	GetMonthForTimestamp(now)
+SET number dayOfYear = 	GetDayOfYearForTimestamp(now)
+SET number dayOfMonth =
+	GetDayOfMonth(now)
+SET number hours =
+	GetHoursForTimestamp(now)
+SET number minutes =
+	GetMinutesForTimestamp(now)
+SET number seconds =
+	GetSecondsForTimestamp(now)
+
+Cls()
+
+WriteLn(
+	ToStr(year) + "-"
+	+ ToStr(month) + "-"
+	+ ToStr(dayOfMonth)
+	+ " " + ToStr(hours) + ":"
+	+ ToStr(minutes) + ":"
+	+ ToStr(seconds)
+)

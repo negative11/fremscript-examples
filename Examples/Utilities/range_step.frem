@@ -1,0 +1,24 @@
+# Build list of numbers in Range with step.
+FUNCTION RangeWithStep(
+	number start,
+	number end,
+	number step
+)
+	READY list nums
+    SET number next = start
+    WHILE next LTE end REPEAT
+        Append(nums, next)
+        next = next + step
+    DONE
+
+	OUTPUT nums
+RESULT list
+
+# Get list of numbers
+SET list nums = RangeWithStep(100, 1000, 100)
+
+# Show the result
+Cls()
+EACH n IN nums REPEAT
+	WriteLn(n)
+DONE

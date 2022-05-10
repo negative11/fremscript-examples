@@ -1,0 +1,999 @@
+FUNCTION SetUp()
+	BuildWordList()
+	# Connect host keyboard to hardware.
+	SysPut("B", 5, true)
+	# Disable Grid layer
+	SysPut("B", 20, false)
+	# Disable Pixel layer
+	SysPut("B", 30, false)
+	# Disable Sprite layer
+	SysPut("B", 40, false)
+
+	# Set color theme
+	SysPut("N", 22, 0)
+	SysPut("N", 21, 0)
+	SysPut("N", 20, 0)
+RESULT nothing
+
+FUNCTION Run()
+	SetUp()
+	Cls()
+	ShowIntro()
+	WriteLn("Press ENTER to start...")
+	WaitStartKey()
+
+	SET boolean playing = true
+	WHILE playing EQ true REPEAT
+		SET list word = GetRandomWord()
+		Play(word)
+		Cls()
+		WriteLn(
+			"Would you like to play again?",
+			"Enter Y/N"
+		)
+
+		READY string choice
+		WHILE
+			choice NEQ "N"
+			AND choice NEQ "Y"
+		REPEAT
+			SET string choice = WaitKey()
+			IF choice EQ "N" THEN
+				playing = false
+			OK
+			IF choice EQ "Y" THEN
+				playing = true
+				Wait(.5)
+			OK
+		DONE
+	DONE
+	WriteLn("Game Over")
+	Wait(1)
+	Cls()
+	WriteLn("READY")
+RESULT nothing
+
+FUNCTION GetRandomWord()
+	OUTPUT words[
+		Random(0, Size(words) - 1)
+	]
+RESULT list
+
+FUNCTION ValidGuess(string key)
+	IF key
+		EQ "ENTER"
+		OR key EQ ""
+	THEN
+		OUTPUT false
+	OK
+	OUTPUT true
+RESULT boolean
+
+FUNCTION Play(list word)
+	SET number wordSize = Size(word)
+	SET number strikes = 6
+
+	READY list matched
+	EACH blank IN Range(0, wordSize-1) REPEAT
+		Append(matched, "_")
+	DONE
+
+	Cls()
+	ShowInstructions(wordSize, strikes)
+	ShowMatched(matched)
+
+	READY list guesses
+	WHILE strikes GT 0 REPEAT
+		READY string guess
+		WHILE not ValidGuess(guess) REPEAT
+			SET string guess = WaitKey()
+		DONE
+
+		IF GuessNotAttempted(
+			guess,
+			guesses,
+			matched
+		) THEN
+			Append(guesses, guess)
+			SET boolean hit = CheckGuess(
+				word,
+				matched,
+				guess
+			)
+
+			IF hit EQ true THEN
+				WriteLn("Hit!")
+			ELSE
+				WriteLn("Miss!")
+				strikes = strikes - 1
+			OK
+
+			Wait(.5)
+			Cls()
+			ShowInstructions(
+				wordSize,
+				strikes
+			)
+			ShowMatched(matched)
+			ShowGuesses(guesses, matched)
+			IF CheckWin(matched) EQ true THEN
+				WriteLn(
+					"",
+					"YOU WIN!!!",
+					""
+				)
+				Wait(2)
+				OUTPUT nothing
+			OK
+		ELSE
+			WriteLn("Already guessed that!")
+			Wait(.5)
+			Cls()
+			ShowInstructions(
+				wordSize,
+				strikes
+			)
+			ShowMatched(matched)
+			ShowGuesses(guesses, matched)
+		OK
+
+	DONE
+RESULT nothing
+
+FUNCTION CheckWin(list matched)
+	EACH match IN matched REPEAT
+		IF match EQ "_" THEN
+			OUTPUT false
+		OK
+	DONE
+	OUTPUT true
+RESULT boolean
+
+FUNCTION ShowMatched(list matched)
+	WriteLn("", "")
+	EACH letter IN matched REPEAT
+		Write(letter + " ")
+	DONE
+	WriteLn("")
+RESULT nothing
+
+FUNCTION ShowGuesses(
+	list guesses,
+	list matched
+)
+	WriteLn("", "Guessed:", "")
+	EACH guess IN guesses REPEAT
+		IF
+			GuessNotMatched(guess, matched)
+		THEN
+			Write(guess, " ")
+		OK
+	DONE
+RESULT nothing
+
+FUNCTION GuessNotMatched(
+	string guess,
+	list matched
+)
+	EACH match IN matched REPEAT
+		IF match EQ guess THEN
+			OUTPUT false
+		OK
+	DONE
+	OUTPUT true
+RESULT boolean
+
+FUNCTION GuessNotAttempted(
+	string guess,
+	list guesses,
+	list matched
+)
+	EACH match IN matched REPEAT
+		IF match EQ guess THEN
+			OUTPUT false
+		OK
+	DONE
+
+	EACH match IN guesses REPEAT
+		IF match EQ guess THEN
+			OUTPUT false
+		OK
+	DONE
+
+	OUTPUT true
+RESULT boolean
+
+FUNCTION CheckGuess(
+	list word,
+	list matched,
+	string guess
+)
+	READY boolean hit
+
+	EACH pos, letter IN word REPEAT
+		IF guess EQ letter THEN
+			matched[pos] = letter
+			hit = true
+		OK
+	DONE
+
+	OUTPUT hit
+RESULT boolean
+
+FUNCTION ShowInstructions(
+	number wordSize,
+	number strikes
+)
+	WriteLn(
+		"I'm thinking of a word with "
+		+ ToStr(wordSize)
+		+ " letters.",
+		"",
+		"You have "
+		+ ToStr(strikes)
+		+ " strikes remaining.",
+		"Good Luck!",
+		"","Press a letter key to guess"
+	)
+RESULT nothing
+
+FUNCTION GetKeyPress()
+	OUTPUT KeyDown()
+RESULT string
+
+FUNCTION WaitKey()
+	WHILE true REPEAT
+		SET string key = GetKeyPress()
+		IF key NEQ "" THEN
+			OUTPUT key
+		OK
+	DONE
+RESULT string
+
+FUNCTION WaitStartKey()
+	WHILE true REPEAT
+		SET string key = GetKeyPress()
+		IF key EQ "ENTER" THEN
+			OUTPUT nothing
+		OK
+	DONE
+RESULT nothing
+
+FUNCTION ShowIntro()
+	WriteLn("Guess-the-word Game")
+	WriteLn("-------------------")
+	WriteLn(
+		"Pick letters and guess the word before", "running out of chances!"
+	)
+	WriteLn("")
+RESULT nothing
+
+READY list words
+FUNCTION BuildWordList()
+	words = [
+	  [
+	    "B",
+	    "O",
+	    "O",
+	    "T"
+	  ],
+	  [
+	    "F",
+	    "L",
+	    "O",
+	    "A",
+	    "T"
+	  ],
+	  [
+	    "R",
+	    "U",
+	    "N"
+	  ],
+	  [
+	    "I",
+	    "N",
+	    "I",
+	    "T",
+	    "I",
+	    "A",
+	    "L",
+	    "I",
+	    "Z",
+	    "E"
+	  ],
+	  [
+	    "C",
+	    "O",
+	    "M",
+	    "P",
+	    "U",
+	    "T",
+	    "E"
+	  ],
+	  [
+	    "R",
+	    "A",
+	    "M"
+	  ],
+	  [
+	    "H",
+	    "A",
+	    "L",
+	    "T"
+	  ],
+	  [
+	    "S",
+	    "A",
+	    "V",
+	    "E"
+	  ],
+	  [
+	    "L",
+	    "O",
+	    "A",
+	    "D"
+	  ],
+	  [
+	    "I",
+	    "N",
+	    "T",
+	    "E",
+	    "R",
+	    "F",
+	    "A",
+	    "C",
+	    "E"
+	  ],
+	  [
+	    "H",
+	    "A",
+	    "R",
+	    "D",
+	    "W",
+	    "A",
+	    "R",
+	    "E"
+	  ],
+	  [
+	    "E",
+	    "R",
+	    "R",
+	    "O",
+	    "R"
+	  ],
+	  [
+	    "N",
+	    "E",
+	    "W"
+	  ],
+	  [
+	    "R",
+	    "E",
+	    "S",
+	    "E",
+	    "T"
+	  ],
+	  [
+	    "P",
+	    "O",
+	    "W",
+	    "E",
+	    "R"
+	  ],
+	  [
+	    "B",
+	    "U",
+	    "T",
+	    "T",
+	    "O",
+	    "N"
+	  ],
+	  [
+	    "S",
+	    "C",
+	    "R",
+	    "E",
+	    "E",
+	    "N"
+	  ],
+	  [
+	    "B",
+	    "Y",
+	    "T",
+	    "E"
+	  ],
+	  [
+	    "W",
+	    "O",
+	    "R",
+	    "D"
+	  ],
+	  [
+	    "S",
+	    "P",
+	    "A",
+	    "C",
+	    "E"
+	  ],
+	  [
+	    "D",
+	    "E",
+	    "L",
+	    "E",
+	    "T",
+	    "E"
+	  ],
+	  [
+	    "E",
+	    "N",
+	    "T",
+	    "E",
+	    "R"
+	  ],
+	  [
+	    "A",
+	    "R",
+	    "R",
+	    "A",
+	    "Y"
+	  ],
+	  [
+	    "C",
+	    "L",
+	    "E",
+	    "A",
+	    "R"
+	  ],
+	  [
+	    "D",
+	    "I",
+	    "S",
+	    "P",
+	    "L",
+	    "A",
+	    "Y"
+	  ],
+	  [
+	    "M",
+	    "O",
+	    "N",
+	    "I",
+	    "T",
+	    "O",
+	    "R"
+	  ],
+	  [
+	    "T",
+	    "E",
+	    "R",
+	    "M",
+	    "I",
+	    "N",
+	    "A",
+	    "L"
+	  ],
+	  [
+	    "C",
+	    "O",
+	    "M",
+	    "P",
+	    "U",
+	    "T",
+	    "E",
+	    "R"
+	  ],
+	  [
+	    "M",
+	    "E",
+	    "M",
+	    "O",
+	    "R",
+	    "Y"
+	  ],
+	  [
+	    "M",
+	    "O",
+	    "D",
+	    "E",
+	    "M"
+	  ],
+	  [
+	    "F",
+	    "L",
+	    "O",
+	    "P",
+	    "P",
+	    "Y"
+	  ],
+	  [
+	    "D",
+	    "R",
+	    "I",
+	    "V",
+	    "E"
+	  ],
+	  [
+	    "F",
+	    "U",
+	    "N",
+	    "C",
+	    "T",
+	    "I",
+	    "O",
+	    "N"
+	  ],
+	  [
+	    "L",
+	    "I",
+	    "S",
+	    "T"
+	  ],
+	  [
+	    "F",
+	    "R",
+	    "E",
+	    "M"
+	  ],
+	  [
+	    "G",
+	    "A",
+	    "M",
+	    "E"
+	  ],
+	  [
+	    "P",
+	    "R",
+	    "O",
+	    "G",
+	    "R",
+	    "A",
+	    "M"
+	  ],
+	  [
+	    "P",
+	    "R",
+	    "O",
+	    "G",
+	    "R",
+	    "A",
+	    "M",
+	    "M",
+	    "E",
+	    "R"
+	  ],
+	  [
+	    "D",
+	    "A",
+	    "T",
+	    "A",
+	    "B",
+	    "A",
+	    "S",
+	    "E"
+	  ],
+	  [
+	    "M",
+	    "A",
+	    "I",
+	    "N",
+	    "F",
+	    "R",
+	    "A",
+	    "M",
+	    "E"
+	  ],
+	  [
+	    "C",
+	    "O",
+	    "R",
+	    "R",
+	    "U",
+	    "P",
+	    "T"
+	  ],
+	  [
+	    "S",
+	    "T",
+	    "O",
+	    "R",
+	    "A",
+	    "G",
+	    "E"
+	  ],
+	  [
+	    "R",
+	    "E",
+	    "S",
+	    "U",
+	    "L",
+	    "T"
+	  ],
+	  [
+	    "W",
+	    "H",
+	    "I",
+	    "L",
+	    "E"
+	  ],
+	  [
+	    "E",
+	    "A",
+	    "C",
+	    "H"
+	  ],
+	  [
+	    "R",
+	    "E",
+	    "P",
+	    "E",
+	    "A",
+	    "T"
+	  ],
+	  [
+	    "W",
+	    "R",
+	    "I",
+	    "T",
+	    "E"
+	  ],
+	  [
+	    "R",
+	    "E",
+	    "A",
+	    "D"
+	  ],
+	  [
+	    "B",
+	    "O",
+	    "O",
+	    "L",
+	    "E",
+	    "A",
+	    "N"
+	  ],
+	  [
+	    "S",
+	    "T",
+	    "R",
+	    "I",
+	    "N",
+	    "G"
+	  ],
+	  [
+	    "N",
+	    "U",
+	    "M",
+	    "B",
+	    "E",
+	    "R"
+	  ],
+	  [
+	    "I",
+	    "N",
+	    "T",
+	    "E",
+	    "G",
+	    "E",
+	    "R"
+	  ],
+	  [
+	    "M",
+	    "A",
+	    "P"
+	  ],
+	  [
+	    "W",
+	    "A",
+	    "I",
+	    "T"
+	  ],
+	  [
+	    "A",
+	    "P",
+	    "P",
+	    "E",
+	    "N",
+	    "D"
+	  ],
+	  [
+	    "P",
+	    "R",
+	    "E",
+	    "P",
+	    "E",
+	    "N",
+	    "D"
+	  ],
+	  [
+	    "S",
+	    "E",
+	    "E",
+	    "D"
+	  ],
+	  [
+	    "I",
+	    "T",
+	    "E",
+	    "R",
+	    "A",
+	    "T",
+	    "E"
+	  ],
+	  [
+	    "M",
+	    "O",
+	    "D",
+	    "U",
+	    "L",
+	    "O"
+	  ],
+	  [
+	    "S",
+	    "P",
+	    "R",
+	    "I",
+	    "T",
+	    "E"
+	  ],
+	  [
+	    "P",
+	    "A",
+	    "R",
+	    "A",
+	    "M",
+	    "E",
+	    "T",
+	    "E",
+	    "R"
+	  ],
+	  [
+	    "S",
+	    "Y",
+	    "N",
+	    "T",
+	    "A",
+	    "X"
+	  ],
+	  [
+	    "M",
+	    "A",
+	    "C",
+	    "H",
+	    "I",
+	    "N",
+	    "E"
+	  ],
+	  [
+	    "L",
+	    "A",
+	    "N",
+	    "G",
+	    "U",
+	    "A",
+	    "G",
+	    "E"
+	  ],
+	  [
+	    "L",
+	    "O",
+	    "O",
+	    "P"
+	  ],
+	  [
+	    "T",
+	    "I",
+	    "M",
+	    "E",
+	    "S",
+	    "T",
+	    "A",
+	    "M",
+	    "P"
+	  ],
+	  [
+	    "U",
+	    "N",
+	    "S",
+	    "E",
+	    "T"
+	  ],
+	  [
+	    "S",
+	    "E",
+	    "T"
+	  ],
+	  [
+	    "M",
+	    "A",
+	    "N",
+	    "U",
+	    "A",
+	    "L"
+	  ],
+	  [
+	    "D",
+	    "O",
+	    "C",
+	    "U",
+	    "M",
+	    "E",
+	    "N",
+	    "T"
+	  ],
+	  [
+	    "G",
+	    "R",
+	    "I",
+	    "D"
+	  ],
+	  [
+	    "F",
+	    "O",
+	    "N",
+	    "T"
+	  ],
+	  [
+	    "T",
+	    "E",
+	    "S",
+	    "T"
+	  ],
+	  [
+	    "M",
+	    "E",
+	    "T",
+	    "E",
+	    "R"
+	  ],
+	  [
+	    "S",
+	    "E",
+	    "G",
+	    "M",
+	    "E",
+	    "N",
+	    "T"
+	  ],
+	  [
+	    "T",
+	    "E",
+	    "X",
+	    "T"
+	  ],
+	  [
+	    "S",
+	    "Y",
+	    "S",
+	    "T",
+	    "E",
+	    "M"
+	  ],
+	  [
+	    "V",
+	    "A",
+	    "R",
+	    "I",
+	    "A",
+	    "B",
+	    "L",
+	    "E"
+	  ],
+	  [
+	    "S",
+	    "U",
+	    "M"
+	  ],
+	  [
+	    "P",
+	    "R",
+	    "O",
+	    "D",
+	    "U",
+	    "C",
+	    "T"
+	  ],
+	  [
+	    "D",
+	    "I",
+	    "F",
+	    "F",
+	    "E",
+	    "R",
+	    "E",
+	    "N",
+	    "C",
+	    "E"
+	  ],
+	  [
+	    "D",
+	    "I",
+	    "V",
+	    "I",
+	    "S",
+	    "I",
+	    "O",
+	    "N"
+	  ],
+	  [
+	    "M",
+	    "U",
+	    "L",
+	    "T",
+	    "I",
+	    "P",
+	    "L",
+	    "I",
+	    "C",
+	    "A",
+	    "T",
+	    "I",
+	    "O",
+	    "N"
+	  ],
+	  [
+	    "A",
+	    "D",
+	    "D",
+	    "I",
+	    "T",
+	    "I",
+	    "O",
+	    "N"
+	  ],
+	  [
+	    "S",
+	    "U",
+	    "B",
+	    "T",
+	    "R",
+	    "A",
+	    "C",
+	    "T",
+	    "I",
+	    "O",
+	    "N"
+	  ],
+	  [
+	    "K",
+	    "E",
+	    "Y",
+	    "B",
+	    "O",
+	    "A",
+	    "R",
+	    "D"
+	  ],
+	  [
+	    "I",
+	    "N",
+	    "P",
+	    "U",
+	    "T"
+	  ],
+	  [
+	    "M",
+	    "I",
+	    "C",
+	    "R",
+	    "O",
+	    "S",
+	    "Y",
+	    "S",
+	    "T",
+	    "E",
+	    "M",
+	    "S"
+	  ],
+	  [
+	    "K",
+	    "E",
+	    "Y",
+	    "W",
+	    "O",
+	    "R",
+	    "D"
+	  ]
+	]
+RESULT nothing
+
+Run()

@@ -1,0 +1,13 @@
+Cls()
+
+Write("Hello World!")
+
+WHILE true REPEAT
+	# Set all text to uppercase.
+	SysPut("B", 11, true)
+	Wait(.5)
+
+	# Set text to mixed case.
+	SysPut("B", 11, false)
+	Wait(.5)
+DONE

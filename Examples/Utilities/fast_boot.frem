@@ -1,0 +1,33 @@
+# FREM fast boot
+Cls()
+
+# Enable text layer
+SysPut("B", 10, true)
+
+# Disable the Grid layer
+SysPut("B", 20, false)
+
+# Disable the Pixel layer
+SysPut("B", 30, false)
+
+# Disable the Sprite layer
+SysPut("B", 40, false)
+
+# Beep!
+Tone(
+	0,
+	1,
+	5,
+	10,
+	0,
+	0,
+	1,
+	0
+)
+Gate(0, true)
+Wait(.33)
+Gate(0, false)
+Cls()
+
+WriteLn("FREM FAST BOOT")
+WriteLn("", "READY")

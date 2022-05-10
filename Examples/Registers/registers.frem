@@ -1,0 +1,59 @@
+# Memory Registers
+
+Cls()
+
+# System register values are stored in
+# ROM and loaded into registers during
+# power up. The system will use values
+# stored in these registers during
+# various operations
+# Values can be modified by the user,
+# and may have interesting consequences!
+
+# System number register stores up to
+# 512 floats (512 * 8 Byte = 4096B)
+SET number addr = 128
+SET number value = 123.456
+SysPut("N", addr, value)
+WriteLn(SysGet("N", addr))
+
+# System boolean register stores up to
+# 288 values (288 * 1 Byte Float = 288B)
+SET number addr = 287
+SET boolean value = true
+SysPut("B", addr, value)
+WriteLn(SysGet("B", addr))
+
+# System string register stores up to
+# 150 lines of text
+# (150 lines * 40 chars = 12000B)
+# This is enough to store 7.5 20-line
+# screens of text.
+SET number addr = 149
+SET string value = "A user message"
+SysPut("S", addr, value)
+WriteLn(SysGet("S", addr))
+
+# User register values are empty upon
+# power up, and are available for use in
+# programs. These values are not cleared
+# between program runs, and can be used
+# to share data between applications.
+
+# User number register: 512 values
+SET number addr = 64
+SET number value = 123.456
+MemPut("N", addr, value)
+WriteLn(MemGet("N", addr))
+
+# User boolean register: 288 values
+SET number addr = 124
+SET boolean value = true
+MemPut("B", addr, value)
+WriteLn(MemGet("B", addr))
+
+# User string register: 150 values
+SET number addr = 0
+SET string value = "Hello"
+MemPut("S", addr, value)
+WriteLn(MemGet("S", addr))

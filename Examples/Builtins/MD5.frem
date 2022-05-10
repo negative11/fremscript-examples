@@ -1,0 +1,12 @@
+SET number code = 1234
+
+# Not very secure.
+SET string hash = MD5(code)
+
+WriteLn(hash)
+
+# Add some entropy
+SET string salt = "super-secret-string"
+hash = MD5(ToStr(code) + salt)
+
+WriteLn(hash)

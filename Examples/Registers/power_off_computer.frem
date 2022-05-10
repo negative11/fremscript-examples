@@ -1,0 +1,13 @@
+# Power off computer after 3 seconds.
+WriteLn("Powering off computer in")
+WriteLn("3...")
+Wait(1)
+WriteLn("2...")
+Wait(1)
+WriteLn("1...")
+Wait(1)
+
+# Set reset flag.
+SysPut("B", 3, true)
+
+WriteLn("This will never run")

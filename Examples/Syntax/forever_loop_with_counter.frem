@@ -1,0 +1,21 @@
+# Loop forever printing and incrementing a counter
+
+Cls()
+READY number ctr
+WHILE true REPEAT
+	WriteLn(ctr)
+	ctr = ctr + 1
+DONE
+
+
+# Loop forever printing and incrementing a counter
+# Mod version to check processing time.
+Cls()
+READY number ctr
+WHILE true REPEAT
+	IF ctr mod 7000 EQ 0 THEN
+		WriteLn(Timestamp())
+	OK
+
+	ctr = ctr + 1
+DONE

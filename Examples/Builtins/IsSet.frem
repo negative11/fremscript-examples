@@ -1,0 +1,20 @@
+# Initialize, set, unset
+READY list tacos
+Append(tacos, "CHICKEN")
+WriteLn(tacos)
+unset tacos
+
+# Initialize, set, call IsSet()
+READY list tacos
+Append(tacos, "BEEF")
+IF IsSet("tacos") THEN
+    WriteLn(tacos)
+OK
+
+# Unset, call IsSet()
+unset tacos
+IF IsSet("tacos") THEN
+    WriteLn(tacos)
+ELSE
+    WriteLn("No tacos for you")
+OK

@@ -1,0 +1,239 @@
+FUNCTION Init()
+	SysPut("B", 10, true)
+	SysPut("B", 20, true)
+	SysPut("B", 30, true)
+	SysPut("B", 40, true)
+	Clear()
+RESULT nothing
+
+FUNCTION Draw()
+	DrawGrid()
+	DrawPixels()
+	DrawSprites()
+	Sync()
+RESULT nothing
+
+FUNCTION Clear()
+	Cls()
+	ClearPixels()
+	ClearGrid()
+	ClearSprites()
+	Sync()
+RESULT nothing
+
+FUNCTION Color(
+	number red,
+	number green,
+	number blue,
+	number alpha
+)
+	OUTPUT {
+		"r": red,
+		"g": green,
+		"b": blue,
+		"a": alpha
+	}
+RESULT map
+
+FUNCTION GetColors()
+	OUTPUT {
+		"red": Color(255, 0, 0, 1),
+		"green": Color(0, 255, 0, 1),
+		"blue": Color(0, 0, 255, 1),
+		"yellow": Color(255, 255, 0, 1),
+		"orange": Color(255, 128, 0, 1),
+		"purple": Color(255, 0, 255, 1)
+	}
+RESULT map
+
+FUNCTION PixelColor(
+	number x,
+	number y,
+	map color
+)
+	Pixel(
+		x, y,
+		color["r"],
+		color["g"],
+		color["b"],
+		color["a"]
+	)
+RESULT nothing
+
+# Draw Rectangle at coordinates
+FUNCTION Rect(
+	number x1,
+	number x2,
+	number y1,
+	number y2,
+	map color
+)
+	# Draw top, bottom
+	EACH x in Range(x1, x2) REPEAT
+	   	EACH y in [y1, y2] REPEAT
+	  		PixelColor(x, y, color)
+	   	DONE
+	DONE
+
+	# Draw sides
+	EACH x in [x1, x2] REPEAT
+	   	EACH y in Range(y1, y2) REPEAT
+	  		PixelColor(x, y, color)
+	   	DONE
+	DONE
+RESULT nothing
+
+# Draw a square rect at coordinates
+FUNCTION Square(
+	number x,
+	number y,
+	number length,
+	map color
+)
+	Rect(
+		x,
+		x + length,
+		y,
+		y + length,
+		color
+	)
+RESULT nothing
+
+# Draw a line from x1y1 to x2y2
+FUNCTION Line(
+	number x1,
+	number y1,
+	number x2,
+	number y2,
+	map color
+)
+	SET number dY = y2 - y1
+	SET number run = 1
+
+	IF x1 LTE x2 THEN
+		SET number dX = x2 - x1
+	ELSE
+		SET number dX = x1 - x2
+		SET number run = -1
+	OK
+
+	# Get Slope
+	IF dX EQ 0 THEN dX = 1 OK
+	IF dY EQ 0 THEN dY = 1 OK
+	SET number m = dY/dX
+
+	# Draw line using slope.
+	SET number pX = x1
+	SET number pY = y1
+	EACH pX IN Range(x1, x2) REPEAT
+		# Draw new point
+		IF
+			pX GTE 0 AND
+			pX LT 320 AND
+			pY GTE 0 AND
+			pY LT 200
+		THEN
+			PixelColor(pX, pY, color)
+
+			# Next y point for slope
+			# Fill in line
+			EACH y IN Range(pY,  pY + m)
+			REPEAT
+				IF y GTE 0 AND y LT 200 THEN
+					PixelColor(pX, y, color)
+				OK
+			DONE
+		OK
+
+		# Next x, y
+		pX = pX + run
+		pY = pY + m
+	DONE
+RESULT nothing
+
+# Build list of numbers in Range with step.
+FUNCTION RangeStep(
+	number start,
+	number end,
+	number step
+)
+	READY list nums
+    SET number next = start
+    WHILE next LTE end REPEAT
+    	Append(nums, next)
+        next = next + step
+    DONE
+
+	OUTPUT nums
+RESULT list
+
+FUNCTION Print(string line)
+	WriteLn(line)
+RESULT nothing
+
+FUNCTION Help()
+	Clear()
+	Print("Functions:")
+	Print("")
+	Print("Help: Print this help screen")
+	Print("Init: Enable/Clear all layers")
+	Print("Draw: Draw all layers")
+	Print("Clear: Clear all layers")
+	Print("PixelColor: Set Pixel (X,Y) to color")
+	Print("GetColors: Get custom color list")
+	Print("Line: Draw color line from (x1y1 to x2y2)")
+	Print("Rect: Draw color rectangle at (x/y)")
+	Print("Square: Draw color square at (x, y)")
+	Print("Print: Write a single line of text")
+	Print("RangeStep: Range with step")
+RESULT nothing
+
+# Import functions from system cache into
+# program environment.
+FUNCTION Import()
+	EnvPut("Help", CacheGet(0))
+	EnvPut("Init", CacheGet(1))
+	EnvPut("Draw", CacheGet(2))
+	EnvPut("Clear", CacheGet(3))
+	EnvPut("Color", CacheGet(4))
+	EnvPut("PixelColor", CacheGet(5))
+	EnvPut("GetColors", CacheGet(6))
+	EnvPut("Line", CacheGet(7))
+	EnvPut("Rect", CacheGet(8))
+	EnvPut("Square", CacheGet(9))
+	EnvPut("Print", CacheGet(10))
+	EnvPut("RangeStep", CacheGet(11))
+RESULT nothing
+
+# Export functions to system cache.
+FUNCTION Export()
+	CachePut(0, Help)
+	CachePut(1, Init)
+	CachePut(2, Draw)
+	CachePut(3, Clear)
+	CachePut(4, Color)
+	CachePut(5, PixelColor)
+	CachePut(6, GetColors)
+	CachePut(7, Line)
+	CachePut(8, Rect)
+	CachePut(9, Square)
+	CachePut(10, Print)
+	CachePut(11, RangeStep)
+
+	CachePut(255, Import)
+RESULT nothing
+
+# Display custom ROM header
+Cls()
+Print("=============================")
+Print("John's FREM Functions")
+Print("=============================")
+Print("")
+Print("Import functions:")
+Print("  CacheGet(255)()")
+Print("Then, display help/functions:")
+Print("  Help()")
+Print("")
+Print("READY.")
+
+Export()

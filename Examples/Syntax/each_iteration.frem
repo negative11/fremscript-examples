@@ -1,0 +1,19 @@
+FUNCTION Nums()
+	OUTPUT [1, 2, 3]
+RESULT list
+
+# Using function call
+EACH num IN Nums() REPEAT
+	WriteLn(num)
+DONE
+
+# Using variable
+SET list nums = [4, 5, 6]
+EACH num IN nums REPEAT
+	WriteLn(num)
+DONE
+
+# Using inline list
+EACH num IN [7, 8, 9] REPEAT
+	WriteLn(num)
+DONE

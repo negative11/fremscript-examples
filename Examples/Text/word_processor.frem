@@ -1,0 +1,142 @@
+FUNCTION SetUp()
+	Cls()
+
+	# Connect host keyboard to hardware.
+	SysPut("B", 5, true)
+	# Disable Grid layer
+	SysPut("B", 20, false)
+	# Disable Pixel layer
+	SysPut("B", 30, false)
+	# Disable Sprite layer
+	SysPut("B", 40, false)
+
+	# Set color theme
+	SysPut("N", 20, 0)
+	SysPut("N", 21, 1)
+	SysPut("N", 22, 1)
+RESULT nothing
+
+FUNCTION GetKeyPress()
+	SET string key = KeyDown()
+	IF key NEQ "" THEN
+		# Some keys can be held
+		IF
+			key EQ "SPACE" OR
+			key EQ "BACKSPACE" THEN
+			Wait(.2)
+		ELSE
+			IF key EQ "ENTER" THEN
+				Wait(.3)
+			ELSE
+				# Other keys: wait for
+				# key up
+				WHILE KeyDown() NEQ ""
+				REPEAT
+				DONE
+			OK
+		OK
+
+		OUTPUT key
+	OK
+	OUTPUT ""
+RESULT string
+
+FUNCTION WaitKey()
+	WHILE true REPEAT
+		SET string key = GetKeyPress()
+		IF key NEQ "" THEN
+			OUTPUT key
+		OK
+	DONE
+RESULT string
+
+FUNCTION Join(list chars)
+	READY string str
+
+	EACH c IN chars REPEAT
+		str = str + c
+	DONE
+
+	OUTPUT str
+RESULT string
+
+FUNCTION Delete()
+	IF Size(lines) GT 0 THEN
+		IF Size(lines[current]) EQ 0 THEN
+			IF Size(lines) GT 1 THEN
+				Pop(lines)
+				current = current - 1
+			OK
+		ELSE
+			Pop(lines[current])
+		OK
+	OK
+RESULT nothing
+
+FUNCTION AddReturn()
+	Append(lines, [])
+	current = current + 1
+RESULT nothing
+
+FUNCTION AddSpace()
+	IF Size(lines[current]) EQ 40 THEN
+		AddReturn()
+	OK
+
+	Append(lines[current], " ")
+RESULT nothing
+
+FUNCTION AddChar(string char)
+	IF Size(lines[current]) EQ 40 THEN
+		AddReturn()
+	OK
+
+	Append(lines[current], char)
+RESULT nothing
+
+FUNCTION GetTextInput()
+	SET string char = WaitKey()
+
+	IF char EQ "ENTER" THEN
+		AddReturn()
+		OUTPUT nothing
+	OK
+
+	IF char EQ "SPACE" THEN
+		AddSpace()
+		OUTPUT nothing
+	OK
+
+	IF char EQ "BACKSPACE" THEN
+		Delete()
+		OUTPUT nothing
+	OK
+
+	AddChar(char)
+RESULT nothing
+
+FUNCTION ShowLines()
+	EACH n, line IN lines REPEAT
+		SET string out = Join(line)
+		IF n EQ current THEN
+			# Draw cursor
+			out = out + "_"
+		OK
+		WriteLn(out)
+	DONE
+RESULT nothing
+
+SET list lines = [[]]
+READY number current
+
+FUNCTION Run()
+	SetUp()
+	WHILE true REPEAT
+		GetTextInput()
+		Cls()
+		ShowLines()
+	DONE
+
+RESULT nothing
+
+Run()

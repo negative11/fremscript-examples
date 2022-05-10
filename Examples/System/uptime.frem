@@ -1,0 +1,15 @@
+# Get the total uptime for system.
+Cls()
+
+# Timestamp is recorded at power on.
+SET number t = SysGet("N", 1)
+
+WHILE true REPEAT
+	# Subtract from the current time to get
+	# the number of seconds since startup
+	SET number uptime = Timestamp() - t
+	Write("Uptime: ", uptime, " seconds")
+	WriteLn("")
+	Wait(1)
+	Cls()
+DONE

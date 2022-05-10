@@ -1,0 +1,12 @@
+CacheGet(255)()
+Init()
+
+Line(0, 0, 40, 40, GetColors()["green"])
+Line(0, 100, 39, 139, GetColors()["yellow"])
+Line(100, 0, 140, 40, GetColors()["blue"])
+Line(100, 100, 139, 139, GetColors()["purple"])
+
+Rect(0, 100, 0, 100, GetColors()["orange"])
+Rect(40, 140, 40, 140, GetColors()["red"])
+
+Draw()

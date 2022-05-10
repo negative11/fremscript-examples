@@ -1,0 +1,16 @@
+Cls()
+
+# Rounding
+WriteLn(Round(4.5))
+WriteLn(Round(4.4))
+WriteLn(Round(4))
+
+# Cast to Integer
+WriteLn(ToInt(500.123))
+
+# Cast used as Floor
+WriteLn(ToInt(4.9))
+
+# Hack for Ceiling
+WriteLn(Round(4.1 + .5))
+WriteLn(Round(4.9 + .5))

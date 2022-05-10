@@ -1,0 +1,14 @@
+Cls()
+
+# Override the system seed
+Seed(1234)
+WriteLn("", "")
+Write("Override System Seed: ", SysGet("N", 50))
+WriteLn("")
+
+# Print some "Random" numbers
+READY number x
+WHILE x LT 5 REPEAT
+	WriteLn(Random(1,500))
+	x = x + 1
+DONE

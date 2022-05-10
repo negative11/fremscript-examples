@@ -1,0 +1,57 @@
+# Logical operators
+
+READY boolean x
+READY boolean y
+
+x = true y = true
+IF x AND y THEN
+    WriteLn("x AND y")
+OK
+
+x = true y = false
+IF x OR y THEN
+    WriteLn("x OR y")
+OK
+
+x = true y = false
+IF x XOR y THEN
+    WriteLn("x XOR y")
+OK
+
+x = true y = false
+IF x NAND y THEN
+    WriteLn("x NAND y")
+OK
+
+x = false y = false
+IF x NOR y THEN
+    WriteLn("x NOR y")
+OK
+
+x = true y = true
+IF x XNOR y THEN
+    WriteLn("x XNOR y")
+OK
+
+# Logical operators are flexible on types.
+IF 1 and true THEN
+    WriteLn("1 AND true")
+OK
+
+IF 1 and "a string" THEN
+    WriteLn("1 AND a string")
+OK
+
+# Unlike some other languages, the right
+# side of an infix operation will be
+# evaluated even if the left evaluates
+# to false.
+# For example:
+
+FUNCTION b()
+    WriteLn("B evaluated")
+    OUTPUT true
+RESULT boolean
+
+IF false AND b() THEN
+OK
