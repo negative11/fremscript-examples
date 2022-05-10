@@ -1,9 +1,16 @@
-# fremscript-examples
+# FREMScript Examples
 
 _FREMScript_ code examples for use with
-the [FREM Sprite32!](https://negative11.itch.io/frem-sprite32)
+the [FREM Sprite32!](https://negative11.itch.io/frem-sprite32) microcomputer.
 
-# Submitting
+## Using the Examples
+
+Navigate to the various category folders in [Examples](./Examples) directory and copy or download
+the _FREMScript_ contents from each file. Click 'Raw' to make it easier to copy the code. Paste code
+examples into the Editor of the FREM Sprite32! game window and hit F5 to run. Clone or download the
+repository for offline access.
+
+## Submitting
 
 Have an example you'd like to share? Submit a pull request!
 
