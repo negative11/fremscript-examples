@@ -28,3 +28,4 @@ OK
 # Greater than or equal to
 IF 20 GTE 20 THEN
 	WriteLn("20 greater than or equal to 20")
+OK

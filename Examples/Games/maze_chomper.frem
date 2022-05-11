@@ -639,6 +639,8 @@ FUNCTION EatPill(number x, number y)
 			score = score + 1
 			Remove(pillsToChomp, p)
 			ClearPill(pill[0], pill[1])
+			# Break
+			OUTPUT nothing
 		OK
 	DONE
 RESULT nothing

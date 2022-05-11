@@ -3,23 +3,10 @@ SET map user = {
 	"Title": "Programmer"
 }
 
-user["Age"] = 9
+user["Age"] = 42
 
-user["Name"] = "John Smith"
-
-SET string nameKey = "NAME"
-user[nameKey] = "JOHN"
-
-WriteLn(user["NAME"], user["Name"])
-
-# Functions can be assigned to map keys.
-SET map person = {
-    "name": "Jim",
-    "greeting": hello
-}
-# Say hello Jim!
-person["greeting"]()
-
-EACH key, func IN functions REPEAT
-    WriteLn(func)
-DONE
+WriteLn(
+	user["Name"],
+	user["Title"],
+	user["Age"]
+)
