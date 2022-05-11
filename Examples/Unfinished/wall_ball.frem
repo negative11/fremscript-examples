@@ -1,0 +1,70 @@
+# Unfinished Ball Game.
+# Finish it!
+
+Cls()
+ClearGrid()
+Sync()
+
+# Enable the Grid
+SysPut("B", 20, true)
+
+READY number score
+SET number balls = 5
+SET number paddlePosY = 4
+READY number ballPosX
+READY number ballPosY
+
+FUNCTION UpdateHeader()
+	WriteLn("Score: " + ToStr(score))
+	WriteLn("Balls: " + ToStr(balls))
+	WriteLn("")
+	EACH _ IN Range(1, 40) REPEAT Write("-") DONE
+RESULT nothing
+
+FUNCTION ClearPaddle()
+	EACH y in Range(0, 3) REPEAT
+		Grid(0, paddlePosY+y, 255, 255, 255, 0)
+	DONE
+RESULT nothing
+
+FUNCTION DrawPaddle()
+	EACH y in Range(0, 3) REPEAT
+		Grid(0, paddlePosY+y, 255, 255, 255, 1)
+	DONE
+RESULT nothing
+
+FUNCTION ClearBall(number x, number y)
+	Grid(x, y, 255, 255, 255, 0)
+RESULT nothing
+
+FUNCTION DrawBall(number x, number y)
+	Grid(x, y, 255, 255, 255, 1)
+RESULT nothing
+
+FUNCTION CheckInput()
+	IF KeyDown() EQ "DOWN" THEN
+		IF paddlePosY LT 21 THEN
+			ClearPaddle()
+			paddlePosY = paddlePosY+1
+		OK
+	OK
+
+	IF KeyDown() EQ "UP" THEN
+		IF paddlePosY GT 4 THEN
+			ClearPaddle()
+			paddlePosY = paddlePosY-1
+		OK
+	OK
+RESULT nothing
+
+# Connect host keyboard to hardware.
+SysPut("B", 5, true)
+
+WHILE true REPEAT
+	Cls()
+	UpdateHeader()
+	DrawPaddle()
+	DrawGrid()
+
+	CheckInput()
+DONE

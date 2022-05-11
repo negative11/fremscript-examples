@@ -1,0 +1,7 @@
+# Connect host keyboard to hardware.
+SysPut("B", 5, true)
+
+# Display typed key
+WHILE true REPEAT
+	WriteLn(KeyDown())
+DONE
