@@ -10,15 +10,15 @@ SysPut("B", 20, true)
 
 READY number score
 SET number balls = 5
-SET number paddlePosY = 4
+SET number paddlePosY = Random(4, 20)
+SET number ballVelX = 0
+SET number ballVelY = 0
 READY number ballPosX
 READY number ballPosY
 
 FUNCTION UpdateHeader()
 	WriteLn("Score: " + ToStr(score))
 	WriteLn("Balls: " + ToStr(balls))
-	WriteLn("")
-	EACH _ IN Range(1, 40) REPEAT Write("-") DONE
 RESULT nothing
 
 FUNCTION ClearPaddle()
@@ -29,7 +29,7 @@ RESULT nothing
 
 FUNCTION DrawPaddle()
 	EACH y in Range(0, 3) REPEAT
-		Grid(0, paddlePosY+y, 255, 255, 255, 1)
+		Grid(0, paddlePosY+y, 255, 64, 0, 1)
 	DONE
 RESULT nothing
 
@@ -40,6 +40,86 @@ RESULT nothing
 FUNCTION DrawBall(number x, number y)
 	Grid(x, y, 255, 255, 255, 1)
 RESULT nothing
+
+FUNCTION DrawWall()
+	EACH y IN Range(4, 24) REPEAT
+		Grid(39, y, 255, 255, 255, 1)
+	DONE
+	EACH x IN Range(0, 39) REPEAT
+		Grid(x, 3, 255, 255, 255, 1)
+		Grid(x, 24, 255, 255, 255, 1)
+	DONE
+RESULT nothing
+
+FUNCTION LaunchBall()
+	IF balls EQ 0 THEN OUTPUT nothing OK
+
+	Cls()
+	WriteLn("PLAY BALL!")
+	Wait(1)
+
+	ballPosX = 1
+	ballPosY = paddlePosY + 5
+	ballVelX = 1
+	ballVelY = GetNewVelY()
+RESULT nothing
+
+FUNCTION UpdateBallPosition()
+	ClearBall(ballPosX, ballPosY)
+
+	# Out of bounds
+	IF ballPosX LT 1 THEN
+		balls = balls - 1
+		LaunchBall()
+	OK
+
+	# Hit paddle
+	IF ballPosX EQ 1 THEN
+		score = score + 1
+		IF
+			ballPosY GTE paddlePosY
+			AND
+			ballPosY LTE paddlePosY + 3
+		THEN
+			ballVelX = -ballVelX
+			ballVelY = GetNewVelY()
+		OK
+	OK
+
+	# Hit wall
+	IF ballPosX EQ 38 THEN
+		ballVelX = -ballVelX
+		ballVelY = GetNewVelY()
+	OK
+
+	# Hit foor
+	IF ballPosY EQ 23 THEN
+		ballVelY = -1
+	OK
+
+	# Hit ceiling
+	IF ballPosY EQ 4 THEN
+		ballVelY = 1
+	OK
+
+	# In bounds
+	IF ballPosX GT 0 AND
+		ballPosX+ballVelX LT 39
+	THEN
+		ballPosX = ballPosX + ballVelX
+	OK
+
+	IF ballPosY GTE 4 AND
+		ballPosY+ballVelY LT 24
+	THEN
+		ballPosY = ballPosY + ballVelY
+	OK
+RESULT nothing
+
+FUNCTION GetNewVelY()
+	SET list vels = [-1, 1]
+	OUTPUT vels[Random(0, Size(vels)-1)]
+RESULT number
 
 FUNCTION CheckInput()
 	IF KeyDown() EQ "DOWN" THEN
@@ -60,11 +140,21 @@ RESULT nothing
 # Connect host keyboard to hardware.
 SysPut("B", 5, true)
 
-WHILE true REPEAT
+LaunchBall()
+WHILE balls GT 0 REPEAT
 	Cls()
 	UpdateHeader()
+
+	UpdateBallPosition()
+	DrawBall(ballPosX, ballPosY)
 	DrawPaddle()
+	DrawWall()
 	DrawGrid()
 
 	CheckInput()
+	Wait(.02)
 DONE
+
+Cls()
+WriteLn("GAME OVER")
+WriteLn("SCORE: " + ToStr(score))
