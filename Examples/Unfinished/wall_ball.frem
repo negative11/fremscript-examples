@@ -10,7 +10,8 @@ SysPut("B", 20, true)
 
 READY number score
 SET number balls = 5
-SET number paddlePosY = Random(4, 20)
+SET number paddlePosY = Random(6, 17)
+SET number paddleSize = 6
 SET number ballVelX = 0
 SET number ballVelY = 0
 READY number ballPosX
@@ -22,30 +23,40 @@ FUNCTION UpdateHeader()
 RESULT nothing
 
 FUNCTION ClearPaddle()
-	EACH y in Range(0, 3) REPEAT
+	EACH y in Range(0, paddleSize-1) REPEAT
 		Grid(0, paddlePosY+y, 255, 255, 255, 0)
 	DONE
 RESULT nothing
 
 FUNCTION DrawPaddle()
-	EACH y in Range(0, 3) REPEAT
+	EACH y in Range(0, paddleSize-1) REPEAT
 		Grid(0, paddlePosY+y, 255, 64, 0, 1)
 	DONE
 RESULT nothing
 
 FUNCTION ClearBall(number x, number y)
-	Grid(x, y, 255, 255, 255, 0)
+	IF
+		x LT 40 AND x GT 0
+		AND y LT 25 AND y GT 0
+	THEN
+		Grid(x, y, 255, 255, 255, 0)
+	OK
 RESULT nothing
 
 FUNCTION DrawBall(number x, number y)
-	Grid(x, y, 255, 255, 255, 1)
+	IF
+		x LT 40 AND x GT 0
+		AND y LT 25 AND y GT 0
+	THEN
+		Grid(x, y, 220, 253, 80, 1)
+	OK
 RESULT nothing
 
 FUNCTION DrawWall()
 	EACH y IN Range(4, 24) REPEAT
 		Grid(39, y, 255, 255, 255, 1)
 	DONE
-	EACH x IN Range(0, 39) REPEAT
+	EACH x IN Range(1, 39) REPEAT
 		Grid(x, 3, 255, 255, 255, 1)
 		Grid(x, 24, 255, 255, 255, 1)
 	DONE
@@ -58,8 +69,8 @@ FUNCTION LaunchBall()
 	WriteLn("PLAY BALL!")
 	Wait(1)
 
-	ballPosX = 1
-	ballPosY = paddlePosY + 5
+	ballPosX = 2
+	ballPosY = paddlePosY + Round(paddleSize/2)
 	ballVelX = 1
 	ballVelY = GetNewVelY()
 RESULT nothing
@@ -79,7 +90,8 @@ FUNCTION UpdateBallPosition()
 		IF
 			ballPosY GTE paddlePosY
 			AND
-			ballPosY LTE paddlePosY + 3
+			ballPosY LTE
+				paddlePosY + paddleSize-1
 		THEN
 			ballVelX = -ballVelX
 			ballVelY = GetNewVelY()
@@ -123,14 +135,14 @@ RESULT number
 
 FUNCTION CheckInput()
 	IF KeyDown() EQ "DOWN" THEN
-		IF paddlePosY LT 21 THEN
+		IF paddlePosY LT 24-paddleSize THEN
 			ClearPaddle()
 			paddlePosY = paddlePosY+1
 		OK
 	OK
 
 	IF KeyDown() EQ "UP" THEN
-		IF paddlePosY GT 4 THEN
+		IF paddlePosY GT paddleSize-2 THEN
 			ClearPaddle()
 			paddlePosY = paddlePosY-1
 		OK
@@ -147,12 +159,13 @@ WHILE balls GT 0 REPEAT
 
 	UpdateBallPosition()
 	DrawBall(ballPosX, ballPosY)
+	CheckInput()
 	DrawPaddle()
 	DrawWall()
 	DrawGrid()
 
-	CheckInput()
-	Wait(.02)
+
+	Wait(.01)
 DONE
 
 Cls()
