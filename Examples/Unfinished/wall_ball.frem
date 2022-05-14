@@ -11,11 +11,14 @@ SysPut("B", 20, true)
 READY number score
 SET number balls = 5
 SET number paddlePosY = Random(6, 17)
-SET number paddleSize = 6
+SET number paddleSize = 3
 SET number ballVelX = 0
 SET number ballVelY = 0
 READY number ballPosX
 READY number ballPosY
+READY number ticks
+READY number hitSoundTicks
+SET number ballSpeed = 20
 
 FUNCTION UpdateHeader()
 	WriteLn("Score: " + ToStr(score))
@@ -62,16 +65,23 @@ FUNCTION DrawWall()
 	DONE
 RESULT nothing
 
+FUNCTION MissBall()
+	Cls()
+	WriteLn("MISS!")
+	PlayMissSound()
+	balls = balls - 1
+RESULT nothing
+
 FUNCTION LaunchBall()
 	IF balls EQ 0 THEN OUTPUT nothing OK
 
 	Cls()
 	WriteLn("PLAY BALL!")
 	Wait(1)
-
-	ballPosX = 2
-	ballPosY = paddlePosY + Round(paddleSize/2)
-	ballVelX = 1
+	PlayLaunchSound()
+	ballPosX = 38
+	ballPosY = Random(4, 23)
+	ballVelX = -1
 	ballVelY = GetNewVelY()
 RESULT nothing
 
@@ -80,19 +90,20 @@ FUNCTION UpdateBallPosition()
 
 	# Out of bounds
 	IF ballPosX LT 1 THEN
-		balls = balls - 1
+		MissBall()
 		LaunchBall()
 	OK
 
 	# Hit paddle
 	IF ballPosX EQ 1 THEN
-		score = score + 1
 		IF
 			ballPosY GTE paddlePosY
 			AND
 			ballPosY LTE
 				paddlePosY + paddleSize-1
 		THEN
+			PlayHitSound()
+			score = score + 1
 			ballVelX = -ballVelX
 			ballVelY = GetNewVelY()
 		OK
@@ -101,7 +112,7 @@ FUNCTION UpdateBallPosition()
 	# Hit wall
 	IF ballPosX EQ 38 THEN
 		ballVelX = -ballVelX
-		ballVelY = GetNewVelY()
+		#ballVelY = -ballVelY
 	OK
 
 	# Hit foor
@@ -149,11 +160,81 @@ FUNCTION CheckInput()
 	OK
 RESULT nothing
 
+FUNCTION PlayHitSound()
+    Tone(
+    	0, # Channel
+    	2, # Shape
+    	4, # Octave
+    	0, # Note
+    	0, # Attack
+    	0, # Decay
+    	1, # Sustain
+    	0 # Release
+    )
+
+    Gate(0, true)
+	hitSoundTicks = 10
+RESULT nothing
+
+FUNCTION PlayMissSound()
+    Tone(
+    	0, # Channel
+    	2, # Shape
+    	2, # Octave
+    	0, # Note
+    	0, # Attack
+    	0, # Decay
+    	1, # Sustain
+    	0 # Release
+    )
+
+    Gate(0, true)
+	Wait(1)
+	Gate(0, false)
+RESULT nothing
+
+FUNCTION PlayLaunchSound()
+    Tone(
+    	0, # Channel
+    	2, # Shape
+    	5, # Octave
+    	0, # Note
+    	0, # Attack
+    	0, # Decay
+    	1, # Sustain
+    	0 # Release
+    )
+
+    Gate(0, true)
+	Wait(.25)
+	Gate(0, false)
+RESULT nothing
+
+FUNCTION StopHitSound()
+    Gate(0, false)
+RESULT nothing
+
+FUNCTION Tick()
+	ticks = ticks + 1
+RESULT nothing
+
+FUNCTION UpdateSounds()
+	IF hitSoundTicks GT 0 THEN
+		hitSoundTicks = hitSoundTicks - 1
+		IF hitSoundTicks LT 1 THEN
+			hitSoundTicks = 0
+			Gate(0, false)
+		OK
+	OK
+RESULT nothing
+
 # Connect host keyboard to hardware.
 SysPut("B", 5, true)
 
 LaunchBall()
+
 WHILE balls GT 0 REPEAT
+	Tick()
 	Cls()
 	UpdateHeader()
 
@@ -164,8 +245,9 @@ WHILE balls GT 0 REPEAT
 	DrawWall()
 	DrawGrid()
 
+	UpdateSounds()
 
-	Wait(.01)
+	Wait(1/ballSpeed)
 DONE
 
 Cls()
